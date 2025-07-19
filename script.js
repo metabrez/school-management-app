@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const sidebar = document.getElementById("sidebar");
   const pageTitle = document.getElementById("page-title");
   const userGreeting = document.getElementById("user-greeting");
+  const studentModal = document.getElementById("studentModal");
+  const teacherModal = document.getElementById("teacherModal");
 
   // --- MOCK DATA ---
   // In a real application, this data would come from a server/database.
@@ -110,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (user) {
       currentUser = user;
-      sessionStorage.setItem("currentUser", JSON.stringify(currentUser)); // Use session storage to persist login
+      sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
       initializeApp();
     } else {
       loginError.classList.remove("hidden");
@@ -126,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function showLoginScreen() {
     appContainer.classList.add("hidden");
     loginContainer.classList.remove("hidden");
-    sidebar.innerHTML = ""; // Clear sidebar
+    sidebar.innerHTML = "";
     loginError.classList.add("hidden");
     loginForm.reset();
   }
@@ -141,15 +143,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (currentUser.role === "admin") {
       userGreeting.textContent = "Welcome, Admin";
-      window.location.hash = window.location.hash || "#dashboard"; // Keep current hash or default
-      initializeAdminDashboard();
     } else if (currentUser.role === "student") {
       const studentData = students.find((s) => s.id === currentUser.studentId);
       userGreeting.textContent = `Welcome, ${studentData.name}`;
-      window.location.hash = window.location.hash || "#profile"; // Keep current hash or default
-      initializeStudentDashboard(studentData);
     }
-    showSection(window.location.hash); // Show the correct section based on hash
+
+    if (!window.location.hash) {
+      window.location.hash =
+        currentUser.role === "admin" ? "#dashboard" : "#profile";
+    } else {
+      showSection(window.location.hash);
+    }
   }
 
   function buildSidebar(role) {
@@ -196,24 +200,46 @@ document.addEventListener("DOMContentLoaded", function () {
       : "#";
     const normalizedHash = hash || defaultHash;
 
-    sections.forEach((section) => section.classList.remove("active"));
+    sections.forEach((section) => {
+      section.innerHTML = ""; // Clear content on navigation
+      section.classList.remove("active");
+    });
 
     const activeSection = document.querySelector(normalizedHash);
     if (activeSection) {
       activeSection.classList.add("active");
       pageTitle.textContent =
         normalizedHash.charAt(1).toUpperCase() + normalizedHash.slice(2);
+
+      // Render content for the active section
+      const studentData =
+        currentUser.role === "student"
+          ? students.find((s) => s.id === currentUser.studentId)
+          : null;
+      switch (normalizedHash) {
+        case "#dashboard":
+          renderAdminDashboard();
+          break;
+        case "#students":
+          renderStudentManagement();
+          break;
+        case "#teachers":
+          renderTeacherManagement();
+          break;
+        case "#calendar":
+          renderCalendar();
+          break;
+        case "#profile":
+          renderStudentProfile(studentData);
+          break;
+        case "#marksheet":
+          renderMarksheet(studentData);
+          break;
+      }
     }
   }
 
-  // --- ADMIN-SPECIFIC FUNCTIONS ---
-  function initializeAdminDashboard() {
-    renderAdminDashboard();
-    renderStudentManagement();
-    renderTeacherManagement();
-    renderCalendar();
-  }
-
+  // --- ADMIN-SPECIFIC RENDER FUNCTIONS ---
   function renderAdminDashboard() {
     const dashboard = document.getElementById("dashboard");
     dashboard.innerHTML = `
@@ -221,13 +247,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="bg-white rounded-lg shadow p-6">
                     <div class="flex items-center">
                         <div class="p-3 rounded-full bg-blue-500 bg-opacity-20"><i class="fas fa-user-graduate text-blue-500 text-2xl"></i></div>
-                        <div class="ml-4"><p class="text-gray-600">Total Students</p><p class="text-2xl font-semibold text-gray-900">${students.length}</p></div>
+                        <div class="ml-4"><p class="text-gray-600">Total Students</p><p id="total-students-stat" class="text-2xl font-semibold text-gray-900">${students.length}</p></div>
                     </div>
                 </div>
                 <div class="bg-white rounded-lg shadow p-6">
                     <div class="flex items-center">
                         <div class="p-3 rounded-full bg-green-500 bg-opacity-20"><i class="fas fa-chalkboard-teacher text-green-500 text-2xl"></i></div>
-                        <div class="ml-4"><p class="text-gray-600">Total Teachers</p><p class="text-2xl font-semibold text-gray-900">${teachers.length}</p></div>
+                        <div class="ml-4"><p class="text-gray-600">Total Teachers</p><p id="total-teachers-stat" class="text-2xl font-semibold text-gray-900">${teachers.length}</p></div>
                     </div>
                 </div>
             </div>`;
@@ -259,73 +285,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             </div>`;
 
-    const gradeFilter = document.getElementById("gradeFilter");
-    const studentSearch = document.getElementById("studentSearch");
-
-    function populateGradeFilter() {
-      const grades = [
-        "All Grades",
-        ...new Set(students.map((s) => s.grade).sort((a, b) => a - b)),
-      ];
-      gradeFilter.innerHTML = grades
-        .map((g) => `<option value="${g}">${g}</option>`)
-        .join("");
-    }
-
-    function renderStudentsList(filterGrade = "All Grades", searchTerm = "") {
-      const studentList = document.getElementById("student-list");
-      let filteredStudents = students;
-      if (filterGrade !== "All Grades" && filterGrade)
-        filteredStudents = filteredStudents.filter(
-          (s) => s.grade === filterGrade
-        );
-      if (searchTerm)
-        filteredStudents = filteredStudents.filter((s) =>
-          s.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
-      studentList.innerHTML =
-        filteredStudents.length > 0
-          ? filteredStudents
-              .map(
-                (s) => `
-                <tr class="border-b border-gray-200 hover:bg-gray-50">
-                    <td class="py-3 px-4">${s.id}</td><td class="py-3 px-4">${s.name}</td><td class="py-3 px-4">${s.grade}</td><td class="py-3 px-4">${s.contact}</td>
-                    <td class="py-3 px-4">
-                        <button class="text-blue-500 hover:text-blue-700 mr-2"><i class="fas fa-edit"></i></button>
-                        <button class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`
-              )
-              .join("")
-          : `<tr><td colspan="5" class="text-center py-4">No students found.</td></tr>`;
-    }
-
-    gradeFilter.addEventListener("change", () =>
-      renderStudentsList(gradeFilter.value, studentSearch.value)
-    );
-    studentSearch.addEventListener("input", () =>
-      renderStudentsList(gradeFilter.value, studentSearch.value)
-    );
-
-    populateGradeFilter();
-    renderStudentsList();
+    setupStudentCrud();
   }
 
   function renderTeacherManagement() {
     const container = document.getElementById("teachers");
-    container.innerHTML = `<div class="bg-white p-6 rounded-lg shadow"><h2 class="text-xl font-semibold text-gray-800 mb-4">Teacher Management</h2><p>Teacher management functionality would be displayed here.</p></div>`;
+    container.innerHTML = `
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Teacher List</h2>
+                    <button id="addTeacherBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Add Teacher</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead><tr class="text-gray-600 bg-gray-50"><th class="py-3 px-4">ID</th><th class="py-3 px-4">Name</th><th class="py-3 px-4">Subject</th><th class="py-3 px-4">Contact</th><th class="py-3 px-4">Actions</th></tr></thead>
+                        <tbody id="teacher-list" class="text-gray-700"></tbody>
+                    </table>
+                </div>
+            </div>`;
+
+    setupTeacherCrud();
   }
 
-  // --- STUDENT-SPECIFIC FUNCTIONS ---
-  function initializeStudentDashboard(studentData) {
-    renderStudentProfile(studentData);
-    renderMarksheet(studentData);
-    renderCalendar();
-  }
-
+  // --- STUDENT-SPECIFIC RENDER FUNCTIONS ---
   function renderStudentProfile(studentData) {
     const container = document.getElementById("profile");
+    // FIX: Add a guard clause to prevent errors if studentData is null (e.g., an admin navigates to #profile)
+    if (!studentData) {
+      container.innerHTML = `<div class="p-6 text-red-500 font-semibold">You do not have permission to view this page or the student data is not available.</div>`;
+      return;
+    }
     container.innerHTML = `
             <div class="bg-white p-8 rounded-lg shadow-lg">
                 <div class="flex items-center mb-6">
@@ -358,6 +347,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function renderMarksheet(studentData) {
     const container = document.getElementById("marksheet");
+    // FIX: Add a guard clause to prevent errors if studentData is null
+    if (!studentData) {
+      container.innerHTML = `<div class="p-6 text-red-500 font-semibold">You do not have permission to view this page or the student data is not available.</div>`;
+      return;
+    }
     const marks = studentData.marks;
     const subjects = Object.keys(marks);
     const totalMarks = subjects.reduce(
@@ -390,16 +384,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         <thead><tr class="text-gray-600 bg-gray-50"><th class="py-3 px-4">Subject</th><th class="py-3 px-4 text-center">Marks (out of 100)</th><th class="py-3 px-4 text-center">Status</th></tr></thead>
                         <tbody class="text-gray-700">${tableRows}</tbody>
                         <tfoot>
-                            <tr class="font-bold bg-gray-100">
-                                <td class="py-4 px-4 text-right">Total Marks:</td>
-                                <td class="py-4 px-4 text-center">${totalMarks}</td>
-                                <td></td>
-                            </tr>
-                            <tr class="font-bold bg-gray-100">
-                                <td class="py-4 px-4 text-right">Average Percentage:</td>
-                                <td class="py-4 px-4 text-center">${average}%</td>
-                                <td></td>
-                            </tr>
+                            <tr class="font-bold bg-gray-100"><td class="py-4 px-4 text-right">Total Marks:</td><td class="py-4 px-4 text-center">${totalMarks}</td><td></td></tr>
+                            <tr class="font-bold bg-gray-100"><td class="py-4 px-4 text-right">Average Percentage:</td><td class="py-4 px-4 text-center">${average}%</td><td></td></tr>
                         </tfoot>
                     </table>
                 </div>
@@ -410,6 +396,216 @@ document.addEventListener("DOMContentLoaded", function () {
   function renderCalendar() {
     const container = document.getElementById("calendar");
     container.innerHTML = `<div class="bg-white p-6 rounded-lg shadow"><h2 class="text-xl font-semibold text-gray-800 mb-4">Events Calendar</h2><p>A dynamic calendar would be displayed here, showing school events, holidays, and exam schedules.</p></div>`;
+  }
+
+  // --- CRUD & EVENT SETUP ---
+  function setupStudentCrud() {
+    const gradeFilter = document.getElementById("gradeFilter");
+    const studentSearch = document.getElementById("studentSearch");
+    const studentList = document.getElementById("student-list");
+
+    function populateGradeFilter() {
+      const grades = [
+        "All Grades",
+        ...new Set(students.map((s) => s.grade).sort((a, b) => a - b)),
+      ];
+      gradeFilter.innerHTML = grades
+        .map((g) => `<option value="${g}">${g}</option>`)
+        .join("");
+    }
+
+    function renderStudentsList() {
+      const filterGrade = gradeFilter.value;
+      const searchTerm = studentSearch.value;
+      let filteredStudents = students;
+      if (filterGrade !== "All Grades" && filterGrade)
+        filteredStudents = filteredStudents.filter(
+          (s) => s.grade === filterGrade
+        );
+      if (searchTerm)
+        filteredStudents = filteredStudents.filter((s) =>
+          s.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+      studentList.innerHTML =
+        filteredStudents.length > 0
+          ? filteredStudents
+              .map(
+                (s) => `
+                <tr class="border-b border-gray-200 hover:bg-gray-50" data-id="${s.id}">
+                    <td class="py-3 px-4">${s.id}</td><td class="py-3 px-4">${s.name}</td><td class="py-3 px-4">${s.grade}</td><td class="py-3 px-4">${s.contact}</td>
+                    <td class="py-3 px-4"><button class="text-blue-500 hover:text-blue-700 mr-2 edit-btn"><i class="fas fa-edit"></i></button><button class="text-red-500 hover:text-red-700 delete-btn"><i class="fas fa-trash"></i></button></td>
+                </tr>`
+              )
+              .join("")
+          : `<tr><td colspan="5" class="text-center py-4">No students found.</td></tr>`;
+    }
+
+    document
+      .getElementById("addStudentBtn")
+      .addEventListener("click", () => openStudentModal());
+    document
+      .getElementById("saveStudentBtn")
+      .addEventListener("click", saveStudent);
+    document
+      .getElementById("closeStudentModal")
+      .addEventListener("click", () => studentModal.classList.add("hidden"));
+
+    studentList.addEventListener("click", (e) => {
+      const id = e.target.closest("tr")?.dataset.id;
+      if (e.target.closest(".edit-btn")) openStudentModal(id);
+      if (e.target.closest(".delete-btn")) deleteStudent(id);
+    });
+
+    gradeFilter.addEventListener("change", renderStudentsList);
+    studentSearch.addEventListener("input", renderStudentsList);
+
+    populateGradeFilter();
+    renderStudentsList();
+  }
+
+  function openStudentModal(id = null) {
+    const form = document.getElementById("studentForm");
+    form.reset();
+    document.getElementById("studentId").value = "";
+    if (id) {
+      const student = students.find((s) => s.id == id);
+      document.getElementById("studentModalTitle").textContent = "Edit Student";
+      document.getElementById("studentId").value = student.id;
+      document.getElementById("studentName").value = student.name;
+      document.getElementById("studentGrade").value = student.grade;
+      document.getElementById("studentContact").value = student.contact;
+    } else {
+      document.getElementById("studentModalTitle").textContent = "Add Student";
+    }
+    studentModal.classList.remove("hidden");
+  }
+
+  function saveStudent() {
+    const id = document.getElementById("studentId").value;
+    const name = document.getElementById("studentName").value;
+    const grade = document.getElementById("studentGrade").value;
+    const contact = document.getElementById("studentContact").value;
+    if (!name || !grade || !contact) return;
+
+    if (id) {
+      const index = students.findIndex((s) => s.id == id);
+      students[index] = { ...students[index], name, grade, contact };
+    } else {
+      const newId =
+        students.length > 0 ? Math.max(...students.map((s) => s.id)) + 1 : 1;
+      students.push({
+        id: newId,
+        name,
+        grade,
+        contact,
+        address: "",
+        parent: "",
+        marks: {},
+      });
+    }
+    studentModal.classList.add("hidden");
+    renderStudentManagement();
+    // FIX: Check if the stat element exists before trying to update it
+    const statElement = document.getElementById("total-students-stat");
+    if (statElement) {
+      statElement.textContent = students.length;
+    }
+  }
+
+  function deleteStudent(id) {
+    students = students.filter((s) => s.id != id);
+    renderStudentManagement();
+    // FIX: Check if the stat element exists before trying to update it
+    const statElement = document.getElementById("total-students-stat");
+    if (statElement) {
+      statElement.textContent = students.length;
+    }
+  }
+
+  function setupTeacherCrud() {
+    const teacherList = document.getElementById("teacher-list");
+
+    function renderTeachersList() {
+      teacherList.innerHTML = teachers
+        .map(
+          (t) => `
+                <tr class="border-b border-gray-200 hover:bg-gray-50" data-id="${t.id}">
+                    <td class="py-3 px-4">${t.id}</td><td class="py-3 px-4">${t.name}</td><td class="py-3 px-4">${t.subject}</td><td class="py-3 px-4">${t.contact}</td>
+                    <td class="py-3 px-4"><button class="text-blue-500 hover:text-blue-700 mr-2 edit-btn"><i class="fas fa-edit"></i></button><button class="text-red-500 hover:text-red-700 delete-btn"><i class="fas fa-trash"></i></button></td>
+                </tr>`
+        )
+        .join("");
+    }
+
+    document
+      .getElementById("addTeacherBtn")
+      .addEventListener("click", () => openTeacherModal());
+    document
+      .getElementById("saveTeacherBtn")
+      .addEventListener("click", saveTeacher);
+    document
+      .getElementById("closeTeacherModal")
+      .addEventListener("click", () => teacherModal.classList.add("hidden"));
+
+    teacherList.addEventListener("click", (e) => {
+      const id = e.target.closest("tr")?.dataset.id;
+      if (e.target.closest(".edit-btn")) openTeacherModal(id);
+      if (e.target.closest(".delete-btn")) deleteTeacher(id);
+    });
+
+    renderTeachersList();
+  }
+
+  function openTeacherModal(id = null) {
+    const form = document.getElementById("teacherForm");
+    form.reset();
+    document.getElementById("teacherId").value = "";
+    if (id) {
+      const teacher = teachers.find((t) => t.id == id);
+      document.getElementById("teacherModalTitle").textContent = "Edit Teacher";
+      document.getElementById("teacherId").value = teacher.id;
+      document.getElementById("teacherName").value = teacher.name;
+      document.getElementById("teacherSubject").value = teacher.subject;
+      document.getElementById("teacherContact").value = teacher.contact;
+    } else {
+      document.getElementById("teacherModalTitle").textContent = "Add Teacher";
+    }
+    teacherModal.classList.remove("hidden");
+  }
+
+  function saveTeacher() {
+    const id = document.getElementById("teacherId").value;
+    const name = document.getElementById("teacherName").value;
+    const subject = document.getElementById("teacherSubject").value;
+    const contact = document.getElementById("teacherContact").value;
+    if (!name || !subject || !contact) return;
+
+    if (id) {
+      const index = teachers.findIndex((t) => t.id == id);
+      teachers[index] = { ...teachers[index], name, subject, contact };
+    } else {
+      const newId =
+        teachers.length > 0 ? Math.max(...teachers.map((t) => t.id)) + 1 : 1;
+      teachers.push({ id: newId, name, subject, contact });
+    }
+    teacherModal.classList.add("hidden");
+    renderTeacherManagement();
+    // FIX: Check if the stat element exists before trying to update it
+    const statElement = document.getElementById("total-teachers-stat");
+    if (statElement) {
+      statElement.textContent = teachers.length;
+    }
+  }
+
+  function deleteTeacher(id) {
+    teachers = teachers.filter((t) => t.id != id);
+    renderTeacherManagement();
+    // FIX: Check if the stat element exists before trying to update it
+    const statElement = document.getElementById("total-teachers-stat");
+    if (statElement) {
+      statElement.textContent = teachers.length;
+    }
   }
 
   // --- CHECK SESSION ON PAGE LOAD ---
