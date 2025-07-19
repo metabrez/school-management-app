@@ -310,7 +310,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // --- STUDENT-SPECIFIC RENDER FUNCTIONS ---
   function renderStudentProfile(studentData) {
     const container = document.getElementById("profile");
-    // FIX: Add a guard clause to prevent errors if studentData is null (e.g., an admin navigates to #profile)
     if (!studentData) {
       container.innerHTML = `<div class="p-6 text-red-500 font-semibold">You do not have permission to view this page or the student data is not available.</div>`;
       return;
@@ -347,7 +346,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function renderMarksheet(studentData) {
     const container = document.getElementById("marksheet");
-    // FIX: Add a guard clause to prevent errors if studentData is null
     if (!studentData) {
       container.innerHTML = `<div class="p-6 text-red-500 font-semibold">You do not have permission to view this page or the student data is not available.</div>`;
       return;
@@ -378,7 +376,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     container.innerHTML = `
             <div class="bg-white p-8 rounded-lg shadow-lg">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Marksheet for ${studentData.name}</h2>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Marksheet for ${studentData.name}</h2>
+                    <button id="download-marksheet-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center">
+                        <i class="fas fa-download mr-2"></i> Download PDF
+                    </button>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead><tr class="text-gray-600 bg-gray-50"><th class="py-3 px-4">Subject</th><th class="py-3 px-4 text-center">Marks (out of 100)</th><th class="py-3 px-4 text-center">Status</th></tr></thead>
@@ -390,6 +393,62 @@ document.addEventListener("DOMContentLoaded", function () {
                     </table>
                 </div>
             </div>`;
+
+    document
+      .getElementById("download-marksheet-btn")
+      .addEventListener("click", () => downloadMarksheetAsPDF(studentData));
+  }
+
+  // --- PDF DOWNLOAD FUNCTION ---
+  function downloadMarksheetAsPDF(studentData) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(20);
+    doc.text("Marksheet", 14, 22);
+    doc.setFontSize(12);
+    doc.text(`Student Name: ${studentData.name}`, 14, 32);
+    doc.text(`Grade: ${studentData.grade}`, 14, 38);
+
+    const tableColumn = ["Subject", "Marks (out of 100)", "Status"];
+    const tableRows = [];
+
+    Object.keys(studentData.marks).forEach((subject) => {
+      const mark = studentData.marks[subject];
+      const status = mark >= 40 ? "Pass" : "Fail";
+      const rowData = [subject, mark, status];
+      tableRows.push(rowData);
+    });
+
+    const totalMarks = Object.values(studentData.marks).reduce(
+      (a, b) => a + b,
+      0
+    );
+    const average = (
+      totalMarks / Object.keys(studentData.marks).length
+    ).toFixed(2);
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+      startY: 45,
+      didDrawPage: function (data) {
+        // Footer
+        doc.setFontSize(12);
+        doc.text(
+          `Total Marks: ${totalMarks}`,
+          14,
+          doc.internal.pageSize.height - 20
+        );
+        doc.text(
+          `Average Percentage: ${average}%`,
+          14,
+          doc.internal.pageSize.height - 14
+        );
+      },
+    });
+
+    doc.save(`Marksheet_${studentData.name.replace(/ /g, "_")}.pdf`);
   }
 
   // --- SHARED FUNCTIONS ---
@@ -506,7 +565,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     studentModal.classList.add("hidden");
     renderStudentManagement();
-    // FIX: Check if the stat element exists before trying to update it
     const statElement = document.getElementById("total-students-stat");
     if (statElement) {
       statElement.textContent = students.length;
@@ -516,7 +574,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function deleteStudent(id) {
     students = students.filter((s) => s.id != id);
     renderStudentManagement();
-    // FIX: Check if the stat element exists before trying to update it
     const statElement = document.getElementById("total-students-stat");
     if (statElement) {
       statElement.textContent = students.length;
@@ -591,7 +648,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     teacherModal.classList.add("hidden");
     renderTeacherManagement();
-    // FIX: Check if the stat element exists before trying to update it
     const statElement = document.getElementById("total-teachers-stat");
     if (statElement) {
       statElement.textContent = teachers.length;
@@ -601,7 +657,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function deleteTeacher(id) {
     teachers = teachers.filter((t) => t.id != id);
     renderTeacherManagement();
-    // FIX: Check if the stat element exists before trying to update it
     const statElement = document.getElementById("total-teachers-stat");
     if (statElement) {
       statElement.textContent = teachers.length;
