@@ -645,11 +645,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    doc.setFontSize(20);
-    doc.text("Marksheet", 14, 22);
+    // --- HEADER ---
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("Hamro School", doc.internal.pageSize.getWidth() / 2, 22, {
+      align: "center",
+    });
+
+    // --- DOCUMENT TITLE & STUDENT INFO ---
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "normal");
+    doc.text("Official Marksheet", doc.internal.pageSize.getWidth() / 2, 32, {
+      align: "center",
+    });
     doc.setFontSize(12);
-    doc.text(`Student Name: ${studentData.name}`, 14, 32);
-    doc.text(`Grade: ${studentData.grade}`, 14, 38);
+    doc.text(`Student Name: ${studentData.name}`, 14, 45);
+    doc.text(`Grade: ${studentData.grade}`, 14, 51);
 
     const tableColumn = ["Subject", "Marks (out of 100)", "Status"];
     const tableRows = [];
@@ -661,31 +672,46 @@ document.addEventListener("DOMContentLoaded", function () {
       tableRows.push(rowData);
     });
 
-    const totalMarks = Object.values(studentData.marks).reduce(
-      (a, b) => a + b,
-      0
-    );
-    const average = (
-      totalMarks / Object.keys(studentData.marks).length
-    ).toFixed(2);
-
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: 45,
+      startY: 60,
       didDrawPage: function (data) {
-        // Footer
-        doc.setFontSize(12);
+        // --- FOOTER ---
+        doc.setFontSize(10);
+        const footerText = `© 2025 Hamro School. All rights reserved.`;
         doc.text(
-          `Total Marks: ${totalMarks}`,
-          14,
-          doc.internal.pageSize.height - 20
+          footerText,
+          doc.internal.pageSize.getWidth() / 2,
+          doc.internal.pageSize.height - 10,
+          { align: "center" }
         );
-        doc.text(
-          `Average Percentage: ${average}%`,
-          14,
-          doc.internal.pageSize.height - 14
-        );
+      },
+      foot: [
+        [
+          { content: "Total Marks:", styles: { halign: "right" } },
+          {
+            content: Object.values(studentData.marks)
+              .reduce((a, b) => a + b, 0)
+              .toString(),
+            styles: { halign: "center" },
+          },
+          "",
+        ],
+        [
+          { content: "Average Percentage:", styles: { halign: "right" } },
+          {
+            content: `${(
+              Object.values(studentData.marks).reduce((a, b) => a + b, 0) /
+              Object.keys(studentData.marks).length
+            ).toFixed(2)}%`,
+            styles: { halign: "center" },
+          },
+          "",
+        ],
+      ],
+      footStyles: {
+        fontStyle: "bold",
       },
     });
 
