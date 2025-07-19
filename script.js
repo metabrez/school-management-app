@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const studentForm = document.getElementById("studentForm");
   const studentModalTitle = document.getElementById("studentModalTitle");
   const gradeFilter = document.getElementById("gradeFilter");
+  const studentSearch = document.getElementById("studentSearch");
 
   function populateGradeFilter() {
     const grades = [
@@ -94,15 +95,27 @@ document.addEventListener("DOMContentLoaded", function () {
         : "All Grades";
   }
 
-  function renderStudents(filterGrade = "All Grades") {
+  function renderStudents(filterGrade = "All Grades", searchTerm = "") {
     studentList.innerHTML = "";
-    const filteredStudents =
-      filterGrade === "All Grades" || !filterGrade
-        ? students
-        : students.filter((s) => s.grade === filterGrade);
+
+    let filteredStudents = students;
+
+    // Filter by grade
+    if (filterGrade !== "All Grades" && filterGrade) {
+      filteredStudents = filteredStudents.filter(
+        (s) => s.grade === filterGrade
+      );
+    }
+
+    // Filter by search term
+    if (searchTerm) {
+      filteredStudents = filteredStudents.filter((s) =>
+        s.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
     if (filteredStudents.length === 0) {
-      studentList.innerHTML = `<tr><td colspan="5" class="text-center py-4">No students found for this grade.</td></tr>`;
+      studentList.innerHTML = `<tr><td colspan="5" class="text-center py-4">No students found.</td></tr>`;
     } else {
       filteredStudents.forEach((s) => {
         studentList.innerHTML += `
@@ -122,7 +135,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   gradeFilter.addEventListener("change", (e) => {
-    renderStudents(e.target.value);
+    renderStudents(e.target.value, studentSearch.value);
+  });
+
+  studentSearch.addEventListener("input", (e) => {
+    renderStudents(gradeFilter.value, e.target.value);
   });
 
   addStudentBtn.addEventListener("click", () => {
@@ -154,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
         students.push({ id: newId, name, grade, contact });
       }
       populateGradeFilter();
-      renderStudents(gradeFilter.value);
+      renderStudents(gradeFilter.value, studentSearch.value);
       updateDashboardStats();
       studentModal.classList.add("hidden");
     }
@@ -173,10 +190,9 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   window.deleteStudent = (id) => {
-    // In a real app, you'd show a confirmation dialog.
     students = students.filter((s) => s.id !== id);
     populateGradeFilter();
-    renderStudents(gradeFilter.value);
+    renderStudents(gradeFilter.value, studentSearch.value);
     updateDashboardStats();
   };
 
