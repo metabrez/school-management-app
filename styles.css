@@ -27,3 +27,9 @@ body {
 .section.active {
     display: block;
 }
+
+/* Ensure modals are on top */
+#studentModal,
+#teacherModal {
+    z-index: 50;
+}
