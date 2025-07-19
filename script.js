@@ -376,7 +376,8 @@ document.addEventListener("DOMContentLoaded", function () {
   logoutBtn.addEventListener("click", function () {
     currentUser = null;
     sessionStorage.removeItem("currentUser");
-    showLoginScreen();
+    window.location.hash = "#home";
+    initializePublicView();
   });
 
   function showLoginScreen() {
@@ -402,7 +403,6 @@ document.addEventListener("DOMContentLoaded", function () {
       userGreeting.textContent = `Welcome, ${studentData.name}`;
     }
 
-    // --- Role-based Route Guarding ---
     const adminRoutes = [
       "#home",
       "#news",
@@ -435,7 +435,6 @@ document.addEventListener("DOMContentLoaded", function () {
       isAuthorized = true;
     }
 
-    // If there's no hash or the user is on an unauthorized page, redirect to their default.
     if (!currentHash || !isAuthorized) {
       window.location.hash = "#home";
     } else {
@@ -443,10 +442,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function initializePublicView() {
+    loginPage.classList.remove("hidden");
+    appContainer.classList.add("hidden");
+    setupPublicNavigation();
+    showPublicSection(window.location.hash);
+  }
+
   function buildSidebar(role) {
     let sidebarContent = `<div class="px-8 py-6 border-b border-gray-700"><h2 class="text-2xl font-semibold">School Portal</h2></div><nav class="flex-1 px-4 py-4">`;
 
-    // Common Links
     sidebarContent += `
             <a href="#home" class="nav-link flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-home mr-3"></i> Home</a>
             <a href="#news" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-newspaper mr-3"></i> News</a>
@@ -476,18 +481,16 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
     }
 
-    // Common Link
     sidebarContent += `<a href="#calendar" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-calendar-alt mr-3"></i> Calendar</a>`;
-
     sidebarContent += `</nav>`;
     sidebar.innerHTML = sidebarContent;
   }
 
   // --- NAVIGATION ---
   function setupNavigation() {
-    window.addEventListener("hashchange", () =>
-      showSection(window.location.hash)
-    );
+    window.addEventListener("hashchange", () => {
+      if (currentUser) showSection(window.location.hash);
+    });
 
     sidebar.addEventListener("click", function (e) {
       const link = e.target.closest(".nav-link");
@@ -506,39 +509,63 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  function setupPublicNavigation() {
+    const publicNav = document.querySelector("#login-page header nav");
+    if (publicNav) {
+      publicNav.addEventListener("click", function (e) {
+        const link = e.target.closest(".public-nav-link");
+        if (link) {
+          e.preventDefault();
+          window.location.hash = link.getAttribute("href");
+        }
+
+        const toggle = e.target.closest("#about-us-public-toggle");
+        if (toggle) {
+          document
+            .getElementById("about-us-public-dropdown")
+            .classList.toggle("hidden");
+        }
+      });
+    }
+    window.addEventListener("hashchange", () => {
+      if (!currentUser) showPublicSection(window.location.hash);
+    });
+  }
+
   function showSection(hash) {
-    const sections = document.querySelectorAll(".section");
+    const sections = document.querySelectorAll("#app-container .section");
     const defaultHash = "#home";
     const normalizedHash = hash || defaultHash;
 
     sections.forEach((section) => {
-      section.innerHTML = ""; // Clear content on navigation
+      section.innerHTML = "";
       section.classList.remove("active");
     });
 
-    const activeSection = document.querySelector(normalizedHash);
+    const activeSection = document.querySelector(
+      `#app-container ${normalizedHash}`
+    );
     if (activeSection) {
       activeSection.classList.add("active");
       pageTitle.textContent =
         normalizedHash.charAt(1).toUpperCase() + normalizedHash.slice(2);
 
-      // Render content for the active section
       const studentData =
         currentUser.role === "student"
           ? students.find((s) => s.id === currentUser.studentId)
           : null;
       switch (normalizedHash) {
         case "#home":
-          renderHome();
+          renderHome(document.getElementById("home"));
           break;
         case "#news":
-          renderNews();
+          renderNews(document.getElementById("news"));
           break;
         case "#intro":
-          renderIntro();
+          renderIntro(document.getElementById("intro"));
           break;
         case "#faculty":
-          renderFaculty();
+          renderFaculty(document.getElementById("faculty"));
           break;
         case "#dashboard":
           renderAdminDashboard();
@@ -550,7 +577,7 @@ document.addEventListener("DOMContentLoaded", function () {
           renderTeacherManagement();
           break;
         case "#calendar":
-          renderCalendar();
+          renderCalendar(document.getElementById("calendar"));
           break;
         case "#profile":
           renderStudentProfile(studentData);
@@ -565,9 +592,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function showPublicSection(hash) {
+    const sections = document.querySelectorAll(".public-section");
+    const defaultHash = "#home";
+    const normalizedHash = hash || defaultHash;
+
+    sections.forEach((section) => section.classList.add("hidden"));
+
+    const activeSectionId = `${normalizedHash.substring(1)}-public`;
+    let activeSection = document.getElementById(activeSectionId);
+    if (normalizedHash === "#login") {
+      activeSection = document.getElementById("login-container");
+    }
+
+    if (activeSection) {
+      activeSection.classList.remove("hidden");
+      switch (normalizedHash) {
+        case "#home":
+          renderHome(document.getElementById("home-public"));
+          break;
+        case "#news":
+          renderNews(document.getElementById("news-public"));
+          break;
+        case "#intro":
+          renderIntro(document.getElementById("intro-public"));
+          break;
+        case "#faculty":
+          renderFaculty(document.getElementById("faculty-public"));
+          break;
+      }
+    } else {
+      const homeSection = document.getElementById("home-public");
+      homeSection.classList.remove("hidden");
+      renderHome(homeSection);
+    }
+  }
+
   // --- RENDER FUNCTIONS ---
-  function renderHome() {
-    const container = document.getElementById("home");
+  function renderHome(container) {
     container.innerHTML = `
             <div class="bg-white p-8 rounded-lg shadow-lg text-center">
                 <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Hamro School</h2>
@@ -576,8 +638,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
   }
 
-  function renderNews() {
-    const container = document.getElementById("news");
+  function renderNews(container) {
     container.innerHTML = `
             <div class="bg-white p-8 rounded-lg shadow-lg">
                 <h2 class="text-3xl font-bold text-gray-800 mb-6">Latest News</h2>
@@ -602,8 +663,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
   }
 
-  function renderIntro() {
-    const container = document.getElementById("intro");
+  function renderIntro(container) {
     container.innerHTML = `
             <div class="bg-white p-8 rounded-lg shadow-lg">
                 <h2 class="text-3xl font-bold text-gray-800 mb-4">About Hamro School</h2>
@@ -622,8 +682,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
   }
 
-  function renderFaculty() {
-    const container = document.getElementById("faculty");
+  function renderFaculty(container) {
     let facultyCards = teachers
       .map(
         (teacher) => `
@@ -1243,6 +1302,6 @@ document.addEventListener("DOMContentLoaded", function () {
     currentUser = JSON.parse(savedUser);
     initializeApp();
   } else {
-    showLoginScreen();
+    initializePublicView();
   }
 });

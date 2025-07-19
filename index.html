@@ -15,48 +15,63 @@
 
 <body class="bg-gray-100">
 
-    <!-- Login Page Container -->
+    <!-- Public Page Container -->
     <div id="login-page" class="flex flex-col min-h-screen">
-        <header class="bg-white shadow-md">
-            <div class="container mx-auto px-6 py-4">
-                <h1 class="text-3xl font-bold text-gray-800 text-center">Hamro School</h1>
-            </div>
+        <header class="bg-white shadow-md sticky top-0 z-10">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800">Hamro School</h1>
+                <div class="flex items-center space-x-4">
+                    <a href="#home" class="public-nav-link text-gray-600 hover:text-blue-500">Home</a>
+                    <a href="#news" class="public-nav-link text-gray-600 hover:text-blue-500">News</a>
+                    <div class="relative" id="about-us-public-menu">
+                        <button id="about-us-public-toggle" class="text-gray-600 hover:text-blue-500 flex items-center">
+                            About Us <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                        </button>
+                        <div id="about-us-public-dropdown"
+                            class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden">
+                            <a href="#intro"
+                                class="public-nav-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Introduction</a>
+                            <a href="#faculty"
+                                class="public-nav-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Faculty</a>
+                        </div>
+                    </div>
+                    <a href="#login"
+                        class="public-nav-link bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Login</a>
+                </div>
+            </nav>
         </header>
 
-        <main id="login-container" class="flex-grow flex items-center justify-center">
-            <div class="w-full max-w-md">
-                <form id="login-form" class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
-                    <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">School Portal Login</h2>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                            Username
-                        </label>
-                        <input
-                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            id="username" type="text" placeholder="Username" required>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                            Password
-                        </label>
-                        <input
-                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                            id="password" type="password" placeholder="******************" required>
-                    </div>
-                    <p id="login-error" class="text-red-500 text-xs italic mb-4 hidden">Invalid username or password.
-                    </p>
-                    <div class="flex items-center justify-between">
-                        <button
-                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                            type="submit">
-                            Sign In
-                        </button>
-                    </div>
-                    <div class="text-xs text-gray-600 mt-4">
-                        <p><b>Admin:</b> admin / password</p>
-                        <p><b>Student:</b> student1 / password</p>
-                    </div>
-                </form>
+        <main class="flex-grow container mx-auto p-6">
+            <div id="home-public" class="public-section"></div>
+            <div id="news-public" class="public-section"></div>
+            <div id="intro-public" class="public-section"></div>
+            <div id="faculty-public" class="public-section"></div>
+            <div id="login-container" class="public-section hidden flex items-center justify-center py-12">
+                <div class="w-full max-w-md">
+                    <form id="login-form" class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+                        <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">School Portal Login</h2>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="username">Username</label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+                                id="username" type="text" placeholder="Username" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password</label>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3"
+                                id="password" type="password" placeholder="******************" required>
+                        </div>
+                        <p id="login-error" class="text-red-500 text-xs italic mb-4 hidden">Invalid username or
+                            password.</p>
+                        <div class="flex items-center justify-between">
+                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full"
+                                type="submit">Sign In</button>
+                        </div>
+                        <div class="text-xs text-center text-gray-600 mt-4">
+                            <p><b>Admin:</b> admin / password</p>
+                            <p><b>Student:</b> student1 / password</p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </main>
 
@@ -65,21 +80,15 @@
         </footer>
     </div>
 
-    <!-- Main App Container -->
+    <!-- Main App Container (Logged In) -->
     <div id="app-container" class="hidden">
         <div class="flex h-screen bg-gray-200">
-            <!-- Sidebar -->
-            <div id="sidebar" class="w-64 bg-gray-800 text-white flex flex-col">
-                <!-- Sidebar content will be generated by JS -->
-            </div>
-
-            <!-- Main content -->
+            <div id="sidebar" class="w-64 bg-gray-800 text-white flex flex-col"></div>
             <div class="flex-1 flex flex-col overflow-hidden">
-                <!-- Header -->
                 <header class="flex justify-between items-center p-6 bg-white border-b-2 border-gray-200">
                     <div class="flex items-center">
                         <h1 class="text-2xl font-bold text-gray-800 mr-6">Hamro School</h1>
-                        <h2 id="page-title" class="text-xl font-semibold text-gray-700">Dashboard</h2>
+                        <h2 id="page-title" class="text-xl font-semibold text-gray-700"></h2>
                     </div>
                     <div class="flex items-center space-x-4">
                         <span id="user-greeting" class="font-medium text-gray-700"></span>
@@ -89,34 +98,19 @@
                         </button>
                     </div>
                 </header>
-
-                <!-- Content Area -->
                 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-                    <!-- Home Section -->
                     <div id="home" class="section"></div>
-                    <!-- News Section -->
                     <div id="news" class="section"></div>
-                    <!-- About Us: Intro Section -->
                     <div id="intro" class="section"></div>
-                    <!-- About Us: Faculty Section -->
                     <div id="faculty" class="section"></div>
-                    <!-- Admin: Dashboard Section -->
                     <div id="dashboard" class="section"></div>
-                    <!-- Admin: Students Section -->
                     <div id="students" class="section"></div>
-                    <!-- Admin: Teachers Section -->
                     <div id="teachers" class="section"></div>
-                    <!-- Shared: Calendar Section -->
                     <div id="calendar" class="section"></div>
-                    <!-- Student: Profile Section -->
                     <div id="profile" class="section"></div>
-                    <!-- Student: Marksheet Section -->
                     <div id="marksheet" class="section"></div>
-                    <!-- Student: ID Card Section -->
                     <div id="idcard" class="section"></div>
                 </main>
-
-                <!-- Footer for the main app -->
                 <footer class="bg-white p-2 text-center text-sm text-gray-600 border-t">
                     <p>&copy; 2025 Hamro School. All rights reserved.</p>
                 </footer>
@@ -125,7 +119,7 @@
     </div>
 
     <!-- Modals -->
-    <div id="studentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div id="studentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">
                 <h3 class="text-lg leading-6 font-medium text-gray-900" id="studentModalTitle">Add Student</h3>
@@ -151,7 +145,7 @@
             </div>
         </div>
     </div>
-    <div id="teacherModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div id="teacherModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">
                 <h3 class="text-lg leading-6 font-medium text-gray-900" id="teacherModalTitle">Add Teacher</h3>
