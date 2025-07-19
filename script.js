@@ -405,6 +405,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- Role-based Route Guarding ---
     const adminRoutes = [
       "#home",
+      "#news",
       "#dashboard",
       "#students",
       "#teachers",
@@ -414,6 +415,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
     const studentRoutes = [
       "#home",
+      "#news",
       "#profile",
       "#marksheet",
       "#idcard",
@@ -447,6 +449,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Common Links
     sidebarContent += `
             <a href="#home" class="nav-link flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-home mr-3"></i> Home</a>
+            <a href="#news" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-newspaper mr-3"></i> News</a>
             <div class="mt-2">
                 <button id="about-us-toggle" class="w-full flex justify-between items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg">
                     <span class="flex items-center"><i class="fas fa-info-circle mr-3"></i> About Us</span>
@@ -528,6 +531,9 @@ document.addEventListener("DOMContentLoaded", function () {
         case "#home":
           renderHome();
           break;
+        case "#news":
+          renderNews();
+          break;
         case "#intro":
           renderIntro();
           break;
@@ -566,6 +572,32 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="bg-white p-8 rounded-lg shadow-lg text-center">
                 <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Hamro School</h2>
                 <p class="text-gray-600 text-xl">Excellence in Education, Foundation for the Future.</p>
+            </div>
+        `;
+  }
+
+  function renderNews() {
+    const container = document.getElementById("news");
+    container.innerHTML = `
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Latest News</h2>
+                <div class="space-y-6">
+                    <div class="border-b pb-4">
+                        <h3 class="text-2xl font-semibold text-gray-800">Annual Sports Day Announced</h3>
+                        <p class="text-sm text-gray-500 mb-2">July 15, 2025</p>
+                        <p class="text-gray-600">Get ready for a day of fun and competition! Our annual sports day will be held on August 10th. Sign-ups for events are now open.</p>
+                    </div>
+                    <div class="border-b pb-4">
+                        <h3 class="text-2xl font-semibold text-gray-800">Science Fair Winners</h3>
+                        <p class="text-sm text-gray-500 mb-2">July 10, 2025</p>
+                        <p class="text-gray-600">Congratulations to the winners of this year's science fair! The projects were outstanding, showcasing incredible creativity and scientific inquiry.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold text-gray-800">Parent-Teacher Meetings</h3>
+                        <p class="text-sm text-gray-500 mb-2">July 5, 2025</p>
+                        <p class="text-gray-600">Parent-teacher meetings for the current term will be held on July 25th and 26th. Please schedule your appointments through the portal.</p>
+                    </div>
+                </div>
             </div>
         `;
   }
@@ -786,41 +818,28 @@ document.addEventListener("DOMContentLoaded", function () {
       container.innerHTML = `<div class="p-6 text-red-500 font-semibold">You do not have permission to view this page or the student data is not available.</div>`;
       return;
     }
+
     container.innerHTML = `
             <div class="flex flex-col items-center">
-                <!-- ID Card Preview -->
-                <div id="id-card-preview" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm border-4 border-blue-500">
-                     <div class="text-center border-b-2 border-gray-200 pb-4 mb-4">
-                        <h2 class="text-2xl font-bold text-blue-600">Hamro School</h2>
-                        <p class="text-sm text-gray-500">Student ID Card</p>
-                    </div>
-                    <div class="flex flex-col items-center space-y-4">
-                        <img class="h-32 w-32 rounded-full object-cover ring-4 ring-blue-200" src="https://placehold.co/150x150/6366f1/white?text=${studentData.name.charAt(
+                <div class="w-full max-w-sm bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex flex-col items-center">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">Hamro School</h2>
+                        <img class="h-32 w-32 rounded-full object-cover my-4" src="https://placehold.co/128x128/6366f1/white?text=${studentData.name.charAt(
                           0
-                        )}" alt="Student Photo">
-                        <div class="text-center">
-                            <h3 class="text-2xl font-semibold text-gray-800">${
-                              studentData.name
-                            }</h3>
-                            <p class="text-gray-600">Grade: ${
-                              studentData.grade
-                            }</p>
-                        </div>
-                    </div>
-                    <div class="mt-6 pt-4 border-t-2 border-gray-200 text-left space-y-2">
-                        <p><strong class="text-gray-600">ID:</strong> <span class="font-mono">${
-                          "S" + studentData.id.toString().padStart(4, "0")
-                        }</span></p>
-                        <p><strong class="text-gray-600">Academic Year:</strong> ${
-                          studentData.academicYear
+                        )}" alt="Student avatar">
+                        <h3 class="text-xl font-semibold text-gray-800">${
+                          studentData.name
+                        }</h3>
+                        <p class="text-gray-600">Student ID: ${
+                          studentData.id
                         }</p>
-                        <p><strong class="text-gray-600">Parent:</strong> ${
-                          studentData.parent
+                        <p class="text-gray-600">Grade: ${studentData.grade}</p>
+                        <p class="text-gray-600">Academic Year: ${
+                          studentData.academicYear
                         }</p>
                     </div>
                 </div>
-                <!-- Download Button -->
-                <button id="download-idcard-btn" class="mt-6 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 flex items-center text-lg">
+                <button id="download-idcard-btn" class="mt-6 bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 flex items-center">
                     <i class="fas fa-download mr-2"></i> Download ID Card
                 </button>
             </div>
@@ -912,51 +931,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function downloadIdCardAsPDF(studentData) {
     const { jsPDF } = window.jspdf;
-    // ID Card dimensions in mm (CR80 size)
-    const cardWidth = 85.6;
-    const cardHeight = 54;
-    const doc = new jsPDF({
-      orientation: "landscape",
-      unit: "mm",
-      format: [cardWidth, cardHeight],
-    });
+    const doc = new jsPDF();
 
-    // Background
-    doc.setFillColor(245, 245, 245);
-    doc.rect(0, 0, cardWidth, cardHeight, "F");
+    // --- ID CARD DESIGN ---
+    doc.setFillColor(243, 244, 246); // Light gray background
+    doc.roundedRect(10, 10, 85, 55, 3, 3, "F");
 
-    // Header
-    doc.setFillColor(37, 99, 235); // blue-600
-    doc.rect(0, 0, cardWidth, 10, "F");
-    doc.setFontSize(10);
+    doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(255, 255, 255);
-    doc.text("Hamro School", cardWidth / 2, 6.5, { align: "center" });
+    doc.text("Hamro School", 52.5, 20, { align: "center" });
 
-    // Student Photo Placeholder
-    doc.setFillColor(224, 231, 255); // blue-100
-    doc.rect(5, 15, 25, 25, "F");
-    doc.setFontSize(20);
-    doc.setTextColor(67, 56, 202); // blue-800
-    doc.text(studentData.name.charAt(0), 5 + 12.5, 15 + 16, {
-      align: "center",
-    });
+    // Placeholder for image
+    doc.setFillColor(229, 231, 235);
+    doc.rect(15, 25, 30, 30, "F");
+    doc.setTextColor(156, 163, 175);
+    doc.text("Photo", 30, 40, { align: "center" });
 
-    // Student Details
+    doc.setTextColor(0, 0, 0);
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(0, 0, 0);
-    doc.text(studentData.name, 35, 20);
+    doc.text(studentData.name, 50, 30);
 
-    doc.setFontSize(8);
+    doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text(`ID: S${studentData.id.toString().padStart(4, "0")}`, 35, 26);
-    doc.text(`Grade: ${studentData.grade}`, 35, 30);
-    doc.text(`Year: ${studentData.academicYear}`, 35, 34);
-
-    // Footer Bar
-    doc.setFillColor(37, 99, 235); // blue-600
-    doc.rect(0, cardHeight - 5, cardWidth, 5, "F");
+    doc.text(`ID: ${studentData.id}`, 50, 38);
+    doc.text(`Grade: ${studentData.grade}`, 50, 44);
+    doc.text(`Year: ${studentData.academicYear}`, 50, 50);
 
     doc.save(`ID_Card_${studentData.name.replace(/ /g, "_")}.pdf`);
   }
