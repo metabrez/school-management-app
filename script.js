@@ -416,6 +416,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "#home",
       "#profile",
       "#marksheet",
+      "#idcard",
       "#calendar",
       "#intro",
       "#faculty",
@@ -468,6 +469,7 @@ document.addEventListener("DOMContentLoaded", function () {
       sidebarContent += `
                 <a href="#profile" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-user-circle mr-3"></i> My Profile</a>
                 <a href="#marksheet" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-poll-h mr-3"></i> Marksheet</a>
+                <a href="#idcard" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-id-card mr-3"></i> ID Card</a>
             `;
     }
 
@@ -549,6 +551,9 @@ document.addEventListener("DOMContentLoaded", function () {
           break;
         case "#marksheet":
           renderMarksheet(studentData);
+          break;
+        case "#idcard":
+          renderIdCard(studentData);
           break;
       }
     }
@@ -775,6 +780,57 @@ document.addEventListener("DOMContentLoaded", function () {
       .addEventListener("click", () => downloadMarksheetAsPDF(studentData));
   }
 
+  function renderIdCard(studentData) {
+    const container = document.getElementById("idcard");
+    if (!studentData) {
+      container.innerHTML = `<div class="p-6 text-red-500 font-semibold">You do not have permission to view this page or the student data is not available.</div>`;
+      return;
+    }
+    container.innerHTML = `
+            <div class="flex flex-col items-center">
+                <!-- ID Card Preview -->
+                <div id="id-card-preview" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm border-4 border-blue-500">
+                     <div class="text-center border-b-2 border-gray-200 pb-4 mb-4">
+                        <h2 class="text-2xl font-bold text-blue-600">Hamro School</h2>
+                        <p class="text-sm text-gray-500">Student ID Card</p>
+                    </div>
+                    <div class="flex flex-col items-center space-y-4">
+                        <img class="h-32 w-32 rounded-full object-cover ring-4 ring-blue-200" src="https://placehold.co/150x150/6366f1/white?text=${studentData.name.charAt(
+                          0
+                        )}" alt="Student Photo">
+                        <div class="text-center">
+                            <h3 class="text-2xl font-semibold text-gray-800">${
+                              studentData.name
+                            }</h3>
+                            <p class="text-gray-600">Grade: ${
+                              studentData.grade
+                            }</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-4 border-t-2 border-gray-200 text-left space-y-2">
+                        <p><strong class="text-gray-600">ID:</strong> <span class="font-mono">${
+                          "S" + studentData.id.toString().padStart(4, "0")
+                        }</span></p>
+                        <p><strong class="text-gray-600">Academic Year:</strong> ${
+                          studentData.academicYear
+                        }</p>
+                        <p><strong class="text-gray-600">Parent:</strong> ${
+                          studentData.parent
+                        }</p>
+                    </div>
+                </div>
+                <!-- Download Button -->
+                <button id="download-idcard-btn" class="mt-6 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 flex items-center text-lg">
+                    <i class="fas fa-download mr-2"></i> Download ID Card
+                </button>
+            </div>
+        `;
+
+    document
+      .getElementById("download-idcard-btn")
+      .addEventListener("click", () => downloadIdCardAsPDF(studentData));
+  }
+
   // --- PDF DOWNLOAD FUNCTION ---
   function downloadMarksheetAsPDF(studentData) {
     const { jsPDF } = window.jspdf;
@@ -852,6 +908,57 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     doc.save(`Marksheet_${studentData.name.replace(/ /g, "_")}.pdf`);
+  }
+
+  function downloadIdCardAsPDF(studentData) {
+    const { jsPDF } = window.jspdf;
+    // ID Card dimensions in mm (CR80 size)
+    const cardWidth = 85.6;
+    const cardHeight = 54;
+    const doc = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: [cardWidth, cardHeight],
+    });
+
+    // Background
+    doc.setFillColor(245, 245, 245);
+    doc.rect(0, 0, cardWidth, cardHeight, "F");
+
+    // Header
+    doc.setFillColor(37, 99, 235); // blue-600
+    doc.rect(0, 0, cardWidth, 10, "F");
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(255, 255, 255);
+    doc.text("Hamro School", cardWidth / 2, 6.5, { align: "center" });
+
+    // Student Photo Placeholder
+    doc.setFillColor(224, 231, 255); // blue-100
+    doc.rect(5, 15, 25, 25, "F");
+    doc.setFontSize(20);
+    doc.setTextColor(67, 56, 202); // blue-800
+    doc.text(studentData.name.charAt(0), 5 + 12.5, 15 + 16, {
+      align: "center",
+    });
+
+    // Student Details
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(0, 0, 0);
+    doc.text(studentData.name, 35, 20);
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.text(`ID: S${studentData.id.toString().padStart(4, "0")}`, 35, 26);
+    doc.text(`Grade: ${studentData.grade}`, 35, 30);
+    doc.text(`Year: ${studentData.academicYear}`, 35, 34);
+
+    // Footer Bar
+    doc.setFillColor(37, 99, 235); // blue-600
+    doc.rect(0, cardHeight - 5, cardWidth, 5, "F");
+
+    doc.save(`ID_Card_${studentData.name.replace(/ /g, "_")}.pdf`);
   }
 
   // --- SHARED FUNCTIONS ---
