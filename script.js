@@ -403,8 +403,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // --- Role-based Route Guarding ---
-    const adminRoutes = ["#dashboard", "#students", "#teachers", "#calendar"];
-    const studentRoutes = ["#profile", "#marksheet", "#calendar"];
+    const adminRoutes = [
+      "#home",
+      "#dashboard",
+      "#students",
+      "#teachers",
+      "#calendar",
+      "#intro",
+      "#faculty",
+    ];
+    const studentRoutes = [
+      "#home",
+      "#profile",
+      "#marksheet",
+      "#calendar",
+      "#intro",
+      "#faculty",
+    ];
     let currentHash = window.location.hash;
 
     let isAuthorized = false;
@@ -419,8 +434,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // If there's no hash or the user is on an unauthorized page, redirect to their default.
     if (!currentHash || !isAuthorized) {
-      window.location.hash =
-        currentUser.role === "admin" ? "#dashboard" : "#profile";
+      window.location.hash = "#home";
     } else {
       showSection(currentHash);
     }
@@ -428,20 +442,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function buildSidebar(role) {
     let sidebarContent = `<div class="px-8 py-6 border-b border-gray-700"><h2 class="text-2xl font-semibold">School Portal</h2></div><nav class="flex-1 px-4 py-4">`;
+
+    // Common Links
+    sidebarContent += `
+            <a href="#home" class="nav-link flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-home mr-3"></i> Home</a>
+            <div class="mt-2">
+                <button id="about-us-toggle" class="w-full flex justify-between items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg">
+                    <span class="flex items-center"><i class="fas fa-info-circle mr-3"></i> About Us</span>
+                    <i class="fas fa-chevron-down transform transition-transform duration-200"></i>
+                </button>
+                <div id="about-us-dropdown" class="hidden pl-8 py-2">
+                    <a href="#intro" class="nav-link block px-4 py-2 text-sm text-gray-200 hover:bg-gray-600 rounded-lg">Introduction</a>
+                    <a href="#faculty" class="nav-link block px-4 py-2 mt-1 text-sm text-gray-200 hover:bg-gray-600 rounded-lg">Faculty</a>
+                </div>
+            </div>
+        `;
+
     if (role === "admin") {
       sidebarContent += `
-                <a href="#dashboard" class="nav-link flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a>
+                <a href="#dashboard" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a>
                 <a href="#students" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-user-graduate mr-3"></i> Students</a>
                 <a href="#teachers" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-chalkboard-teacher mr-3"></i> Teachers</a>
-                <a href="#calendar" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-calendar-alt mr-3"></i> Calendar</a>
             `;
     } else if (role === "student") {
       sidebarContent += `
-                <a href="#profile" class="nav-link flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-user-circle mr-3"></i> My Profile</a>
+                <a href="#profile" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-user-circle mr-3"></i> My Profile</a>
                 <a href="#marksheet" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-poll-h mr-3"></i> Marksheet</a>
-                <a href="#calendar" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-calendar-alt mr-3"></i> Calendar</a>
             `;
     }
+
+    // Common Link
+    sidebarContent += `<a href="#calendar" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-calendar-alt mr-3"></i> Calendar</a>`;
+
     sidebarContent += `</nav>`;
     sidebar.innerHTML = sidebarContent;
   }
@@ -458,16 +490,20 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         window.location.hash = link.getAttribute("href");
       }
+
+      const toggle = e.target.closest("#about-us-toggle");
+      if (toggle) {
+        const dropdown = document.getElementById("about-us-dropdown");
+        const icon = toggle.querySelector(".fa-chevron-down");
+        dropdown.classList.toggle("hidden");
+        icon.classList.toggle("rotate-180");
+      }
     });
   }
 
   function showSection(hash) {
     const sections = document.querySelectorAll(".section");
-    const defaultHash = currentUser
-      ? currentUser.role === "admin"
-        ? "#dashboard"
-        : "#profile"
-      : "#";
+    const defaultHash = "#home";
     const normalizedHash = hash || defaultHash;
 
     sections.forEach((section) => {
@@ -487,6 +523,15 @@ document.addEventListener("DOMContentLoaded", function () {
           ? students.find((s) => s.id === currentUser.studentId)
           : null;
       switch (normalizedHash) {
+        case "#home":
+          renderHome();
+          break;
+        case "#intro":
+          renderIntro();
+          break;
+        case "#faculty":
+          renderFaculty();
+          break;
         case "#dashboard":
           renderAdminDashboard();
           break;
@@ -509,7 +554,64 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // --- ADMIN-SPECIFIC RENDER FUNCTIONS ---
+  // --- RENDER FUNCTIONS ---
+  function renderHome() {
+    const container = document.getElementById("home");
+    container.innerHTML = `
+            <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Hamro School</h2>
+                <p class="text-gray-600 text-xl">Excellence in Education, Foundation for the Future.</p>
+            </div>
+        `;
+  }
+
+  function renderIntro() {
+    const container = document.getElementById("intro");
+    container.innerHTML = `
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">About Hamro School</h2>
+                <p class="text-gray-700 text-lg mb-6">
+                    Your central hub for managing and accessing all school-related information.
+                </p>
+                <div class="border-t pt-6">
+                    <p class="text-gray-600 mb-4">
+                        Hamro School is dedicated to providing a nurturing and challenging environment that encourages high expectations for success. We are committed to fostering a community of learners where students are empowered to reach their full potential. Our curriculum is designed to be comprehensive and is supported by a wide range of co-curricular activities that help in the holistic development of our students.
+                    </p>
+                    <p class="text-gray-600">
+                        Whether you are an administrator, a teacher, or a student, this portal is designed to provide you with the tools and resources you need to succeed.
+                    </p>
+                </div>
+            </div>
+        `;
+  }
+
+  function renderFaculty() {
+    const container = document.getElementById("faculty");
+    let facultyCards = teachers
+      .map(
+        (teacher) => `
+            <div class="bg-white p-6 rounded-lg shadow-md flex items-center space-x-4">
+                <div class="p-3 rounded-full bg-indigo-100">
+                    <i class="fas fa-chalkboard-teacher text-indigo-500 text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-800">${teacher.name}</h3>
+                    <p class="text-gray-600">${teacher.subject}</p>
+                    <p class="text-sm text-gray-500">${teacher.contact}</p>
+                </div>
+            </div>
+        `
+      )
+      .join("");
+
+    container.innerHTML = `
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Our Faculty</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ${facultyCards}
+            </div>
+        `;
+  }
+
   function renderAdminDashboard() {
     const dashboard = document.getElementById("dashboard");
     dashboard.innerHTML = `
