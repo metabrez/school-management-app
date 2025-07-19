@@ -7,49 +7,62 @@
     <title>School Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-gray-100">
 
-    <!-- Login Container -->
-    <div id="login-container" class="flex items-center justify-center h-screen">
-        <div class="w-full max-w-md">
-            <form id="login-form" class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
-                <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">School Portal Login</h2>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                        Username
-                    </label>
-                    <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="username" type="text" placeholder="Username" required>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                        Password
-                    </label>
-                    <input
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                        id="password" type="password" placeholder="******************" required>
-                </div>
-                <p id="login-error" class="text-red-500 text-xs italic mb-4 hidden">Invalid username or password.</p>
-                <div class="flex items-center justify-between">
-                    <button
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                        type="submit">
-                        Sign In
-                    </button>
-                </div>
-                <div class="text-xs text-gray-600 mt-4">
-                    <p><b>Admin:</b> admin / password</p>
-                    <p><b>Student:</b> student1 / password</p>
-                </div>
-            </form>
-        </div>
+    <!-- Login Page Container -->
+    <div id="login-page" class="flex flex-col min-h-screen">
+        <header class="bg-white shadow-md">
+            <div class="container mx-auto px-6 py-4">
+                <h1 class="text-3xl font-bold text-gray-800 text-center">Hamro School</h1>
+            </div>
+        </header>
+
+        <main id="login-container" class="flex-grow flex items-center justify-center">
+            <div class="w-full max-w-md">
+                <form id="login-form" class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+                    <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">School Portal Login</h2>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                            Username
+                        </label>
+                        <input
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            id="username" type="text" placeholder="Username" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+                            Password
+                        </label>
+                        <input
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                            id="password" type="password" placeholder="******************" required>
+                    </div>
+                    <p id="login-error" class="text-red-500 text-xs italic mb-4 hidden">Invalid username or password.
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <button
+                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                            type="submit">
+                            Sign In
+                        </button>
+                    </div>
+                    <div class="text-xs text-gray-600 mt-4">
+                        <p><b>Admin:</b> admin / password</p>
+                        <p><b>Student:</b> student1 / password</p>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="bg-white p-4 text-center text-gray-600">
+            <p>&copy; 2025 Hamro School. All rights reserved.</p>
+        </footer>
     </div>
 
     <!-- Main App Container -->
@@ -65,7 +78,8 @@
                 <!-- Header -->
                 <header class="flex justify-between items-center p-6 bg-white border-b-2 border-gray-200">
                     <div class="flex items-center">
-                        <h1 id="page-title" class="text-3xl font-semibold text-gray-800">Dashboard</h1>
+                        <h1 class="text-2xl font-bold text-gray-800 mr-6">Hamro School</h1>
+                        <h2 id="page-title" class="text-xl font-semibold text-gray-700">Dashboard</h2>
                     </div>
                     <div class="flex items-center space-x-4">
                         <span id="user-greeting" class="font-medium text-gray-700"></span>
@@ -96,11 +110,16 @@
                     <!-- Student: Marksheet Section -->
                     <div id="marksheet" class="section"></div>
                 </main>
+
+                <!-- Footer for the main app -->
+                <footer class="bg-white p-2 text-center text-sm text-gray-600 border-t">
+                    <p>&copy; 2025 Hamro School. All rights reserved.</p>
+                </footer>
             </div>
         </div>
     </div>
 
-    <!-- Modals (re-used from previous version) -->
+    <!-- Modals -->
     <div id="studentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">

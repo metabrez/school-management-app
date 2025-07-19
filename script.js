@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentUser = null;
 
   // --- DOM ELEMENTS ---
-  const loginContainer = document.getElementById("login-container");
+  const loginPage = document.getElementById("login-page"); // Changed from login-container
   const appContainer = document.getElementById("app-container");
   const loginForm = document.getElementById("login-form");
   const loginError = document.getElementById("login-error");
@@ -351,7 +351,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showLoginScreen() {
     appContainer.classList.add("hidden");
-    loginContainer.classList.remove("hidden");
+    loginPage.classList.remove("hidden"); // Changed
     sidebar.innerHTML = "";
     loginError.classList.add("hidden");
     loginForm.reset();
@@ -359,7 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // --- INITIALIZATION ---
   function initializeApp() {
-    loginContainer.classList.add("hidden");
+    loginPage.classList.add("hidden"); // Changed
     appContainer.classList.remove("hidden");
 
     buildSidebar(currentUser.role);
