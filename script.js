@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentUser = null;
 
   // --- DOM ELEMENTS ---
-  const loginPage = document.getElementById("login-page"); // Changed from login-container
+  const loginPage = document.getElementById("login-page");
   const appContainer = document.getElementById("app-container");
   const loginForm = document.getElementById("login-form");
   const loginError = document.getElementById("login-error");
@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 1,
       name: "Alice Johnson",
       grade: "10",
+      academicYear: "2024-2025",
       contact: "alice@example.com",
       address: "123 Maple St, Springfield",
       parent: "John Johnson",
@@ -45,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 2,
       name: "Bob Smith",
       grade: "11",
+      academicYear: "2024-2025",
       contact: "bob@example.com",
       address: "456 Oak Ave, Springfield",
       parent: "Jane Smith",
@@ -54,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 3,
       name: "Charlie Brown",
       grade: "9",
+      academicYear: "2024-2025",
       contact: "charlie@example.com",
       address: "789 Pine Ln, Springfield",
       parent: "Chris Brown",
@@ -63,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 4,
       name: "Diana Prince",
       grade: "10",
+      academicYear: "2024-2025",
       contact: "diana@example.com",
       address: "101 Elm Ct, Springfield",
       parent: "Diana Prince Sr.",
@@ -72,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 5,
       name: "Ethan Hunt",
       grade: "12",
+      academicYear: "2024-2025",
       contact: "ethan@example.com",
       address: "212 Birch Rd, Springfield",
       parent: "Ethan Hunt Sr.",
@@ -81,6 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 6,
       name: "Fiona Glenanne",
       grade: "11",
+      academicYear: "2024-2025",
       contact: "fiona@example.com",
       address: "321 Cedar Dr, Springfield",
       parent: "Michael Westen",
@@ -90,6 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 7,
       name: "George Costanza",
       grade: "10",
+      academicYear: "2024-2025",
       contact: "george@example.com",
       address: "456 Walnut St, Springfield",
       parent: "Frank Costanza",
@@ -99,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 8,
       name: "Harry Potter",
       grade: "9",
+      academicYear: "2024-2025",
       contact: "harry@example.com",
       address: "4 Privet Drive, Springfield",
       parent: "James Potter",
@@ -108,6 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 9,
       name: "Irene Adler",
       grade: "12",
+      academicYear: "2024-2025",
       contact: "irene@example.com",
       address: "221B Baker St, Springfield",
       parent: "Mr. Adler",
@@ -117,6 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 10,
       name: "Jack Sparrow",
       grade: "11",
+      academicYear: "2024-2025",
       contact: "jack@example.com",
       address: "The Black Pearl, Springfield",
       parent: "Captain Teague",
@@ -126,6 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 11,
       name: "Kate Austen",
       grade: "10",
+      academicYear: "2024-2025",
       contact: "kate@example.com",
       address: "Oceanic Flight 815, Springfield",
       parent: "Diane Janssen",
@@ -135,6 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 12,
       name: "Luke Skywalker",
       grade: "9",
+      academicYear: "2024-2025",
       contact: "luke@example.com",
       address: "Tatooine, Springfield",
       parent: "Darth Vader",
@@ -144,6 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 13,
       name: "Michael Scott",
       grade: "12",
+      academicYear: "2024-2025",
       contact: "michael@example.com",
       address: "Dunder Mifflin, Springfield",
       parent: "Mr. Scott",
@@ -153,6 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 14,
       name: "Neo Anderson",
       grade: "11",
+      academicYear: "2024-2025",
       contact: "neo@example.com",
       address: "The Matrix, Springfield",
       parent: "The Architect",
@@ -162,6 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 15,
       name: "Olivia Dunham",
       grade: "10",
+      academicYear: "2024-2025",
       contact: "olivia@example.com",
       address: "Fringe Division, Springfield",
       parent: "Walter Bishop",
@@ -171,6 +186,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 16,
       name: "Peter Parker",
       grade: "9",
+      academicYear: "2024-2025",
       contact: "peter@example.com",
       address: "Queens, Springfield",
       parent: "Aunt May",
@@ -180,6 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 17,
       name: "Quinn Fabray",
       grade: "12",
+      academicYear: "2024-2025",
       contact: "quinn@example.com",
       address: "McKinley High, Springfield",
       parent: "Judy Fabray",
@@ -189,6 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 18,
       name: "Rachel Green",
       grade: "11",
+      academicYear: "2024-2025",
       contact: "rachel@example.com",
       address: "Central Perk, Springfield",
       parent: "Dr. Leonard Green",
@@ -198,6 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 19,
       name: "Sheldon Cooper",
       grade: "10",
+      academicYear: "2024-2025",
       contact: "sheldon@example.com",
       address: "Caltech, Springfield",
       parent: "Mary Cooper",
@@ -207,6 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 20,
       name: "Tony Stark",
       grade: "12",
+      academicYear: "2024-2025",
       contact: "tony@example.com",
       address: "Stark Tower, Springfield",
       parent: "Howard Stark",
@@ -216,6 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 21,
       name: "Uhura Nyota",
       grade: "11",
+      academicYear: "2024-2025",
       contact: "uhura@example.com",
       address: "USS Enterprise, Springfield",
       parent: "Mr. Uhura",
@@ -225,6 +246,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 22,
       name: "Vito Corleone",
       grade: "10",
+      academicYear: "2024-2025",
       contact: "vito@example.com",
       address: "Corleone Compound, Springfield",
       parent: "Antonio Andolini",
@@ -234,6 +256,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 23,
       name: "Walter White",
       grade: "9",
+      academicYear: "2024-2025",
       contact: "walter@example.com",
       address: "308 Negra Arroyo Lane, Springfield",
       parent: "Mr. White",
@@ -243,6 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 24,
       name: "Xena Warrior",
       grade: "12",
+      academicYear: "2024-2025",
       contact: "xena@example.com",
       address: "Amphipolis, Springfield",
       parent: "Cyrene",
@@ -252,6 +276,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 25,
       name: "Yoda Master",
       grade: "11",
+      academicYear: "2024-2025",
       contact: "yoda@example.com",
       address: "Dagobah, Springfield",
       parent: "The Force",
@@ -261,6 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 26,
       name: "Zelda Princess",
       grade: "10",
+      academicYear: "2024-2025",
       contact: "zelda@example.com",
       address: "Hyrule Castle, Springfield",
       parent: "King Rhoam",
@@ -270,6 +296,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 27,
       name: "Arthur Dent",
       grade: "9",
+      academicYear: "2024-2025",
       contact: "arthur@example.com",
       address: "Earth, Mostly Harmless",
       parent: "Mr. Dent",
@@ -279,6 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 28,
       name: "Buffy Summers",
       grade: "12",
+      academicYear: "2024-2025",
       contact: "buffy@example.com",
       address: "Sunnydale High, Springfield",
       parent: "Joyce Summers",
@@ -288,6 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 29,
       name: "Clark Kent",
       grade: "11",
+      academicYear: "2024-2025",
       contact: "clark@example.com",
       address: "Smallville, Springfield",
       parent: "Jonathan Kent",
@@ -297,6 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
       id: 30,
       name: "Dana Scully",
       grade: "10",
+      academicYear: "2024-2025",
       contact: "dana@example.com",
       address: "FBI Headquarters, Springfield",
       parent: "William Scully",
@@ -351,7 +381,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function showLoginScreen() {
     appContainer.classList.add("hidden");
-    loginPage.classList.remove("hidden"); // Changed
+    loginPage.classList.remove("hidden");
     sidebar.innerHTML = "";
     loginError.classList.add("hidden");
     loginForm.reset();
@@ -359,7 +389,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // --- INITIALIZATION ---
   function initializeApp() {
-    loginPage.classList.add("hidden"); // Changed
+    loginPage.classList.add("hidden");
     appContainer.classList.remove("hidden");
 
     buildSidebar(currentUser.role);
@@ -566,11 +596,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     }</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-6">
-                    <div><p class="font-semibold text-gray-600">Grade:</p><p class="text-lg text-gray-900">${
-                      studentData.grade
-                    }</p></div>
                     <div><p class="font-semibold text-gray-600">Student ID:</p><p class="text-lg text-gray-900">${
                       studentData.id
+                    }</p></div>
+                    <div><p class="font-semibold text-gray-600">Academic Year:</p><p class="text-lg text-gray-900">${
+                      studentData.academicYear
+                    }</p></div>
+                    <div><p class="font-semibold text-gray-600">Grade:</p><p class="text-lg text-gray-900">${
+                      studentData.grade
                     }</p></div>
                     <div><p class="font-semibold text-gray-600">Contact Email:</p><p class="text-lg text-gray-900">${
                       studentData.contact
@@ -618,7 +651,7 @@ document.addEventListener("DOMContentLoaded", function () {
     container.innerHTML = `
             <div class="bg-white p-8 rounded-lg shadow-lg">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Marksheet for ${studentData.name}</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">Marksheet for ${studentData.name} (${studentData.academicYear})</h2>
                     <button id="download-marksheet-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center">
                         <i class="fas fa-download mr-2"></i> Download PDF
                     </button>
@@ -661,6 +694,7 @@ document.addEventListener("DOMContentLoaded", function () {
     doc.setFontSize(12);
     doc.text(`Student Name: ${studentData.name}`, 14, 45);
     doc.text(`Grade: ${studentData.grade}`, 14, 51);
+    doc.text(`Academic Year: ${studentData.academicYear}`, 14, 57);
 
     const tableColumn = ["Subject", "Marks (out of 100)", "Status"];
     const tableRows = [];
@@ -675,7 +709,7 @@ document.addEventListener("DOMContentLoaded", function () {
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: 60,
+      startY: 65,
       didDrawPage: function (data) {
         // --- FOOTER ---
         doc.setFontSize(10);
@@ -856,6 +890,8 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("studentId").value = student.id;
       document.getElementById("studentName").value = student.name;
       document.getElementById("studentGrade").value = student.grade;
+      document.getElementById("studentAcademicYear").value =
+        student.academicYear;
       document.getElementById("studentContact").value = student.contact;
     } else {
       document.getElementById("studentModalTitle").textContent = "Add Student";
@@ -867,12 +903,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const id = document.getElementById("studentId").value;
     const name = document.getElementById("studentName").value;
     const grade = document.getElementById("studentGrade").value;
+    const academicYear = document.getElementById("studentAcademicYear").value;
     const contact = document.getElementById("studentContact").value;
-    if (!name || !grade || !contact) return;
+    if (!name || !grade || !academicYear || !contact) return;
 
     if (id) {
       const index = students.findIndex((s) => s.id == id);
-      students[index] = { ...students[index], name, grade, contact };
+      students[index] = {
+        ...students[index],
+        name,
+        grade,
+        academicYear,
+        contact,
+      };
     } else {
       const newId =
         students.length > 0 ? Math.max(...students.map((s) => s.id)) + 1 : 1;
@@ -880,6 +923,7 @@ document.addEventListener("DOMContentLoaded", function () {
         id: newId,
         name,
         grade,
+        academicYear,
         contact,
         address: "",
         parent: "",
