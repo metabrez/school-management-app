@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const teacherModal = document.getElementById("teacherModal");
 
   // --- MOCK DATA ---
-  // In a real application, this data would come from a server/database.
   const users = [
     { username: "admin", password: "password", role: "admin" },
     {
@@ -77,6 +76,231 @@ document.addEventListener("DOMContentLoaded", function () {
       address: "212 Birch Rd, Springfield",
       parent: "Ethan Hunt Sr.",
       marks: { Math: 89, Science: 91, History: 85, English: 88 },
+    },
+    {
+      id: 6,
+      name: "Fiona Glenanne",
+      grade: "11",
+      contact: "fiona@example.com",
+      address: "321 Cedar Dr, Springfield",
+      parent: "Michael Westen",
+      marks: { Math: 91, Science: 93, History: 89, English: 92 },
+    },
+    {
+      id: 7,
+      name: "George Costanza",
+      grade: "10",
+      contact: "george@example.com",
+      address: "456 Walnut St, Springfield",
+      parent: "Frank Costanza",
+      marks: { Math: 72, Science: 68, History: 75, English: 78 },
+    },
+    {
+      id: 8,
+      name: "Harry Potter",
+      grade: "9",
+      contact: "harry@example.com",
+      address: "4 Privet Drive, Springfield",
+      parent: "James Potter",
+      marks: { Math: 88, Science: 90, History: 85, English: 87 },
+    },
+    {
+      id: 9,
+      name: "Irene Adler",
+      grade: "12",
+      contact: "irene@example.com",
+      address: "221B Baker St, Springfield",
+      parent: "Mr. Adler",
+      marks: { Math: 96, Science: 94, History: 97, English: 98 },
+    },
+    {
+      id: 10,
+      name: "Jack Sparrow",
+      grade: "11",
+      contact: "jack@example.com",
+      address: "The Black Pearl, Springfield",
+      parent: "Captain Teague",
+      marks: { Math: 65, Science: 70, History: 80, English: 72 },
+    },
+    {
+      id: 11,
+      name: "Kate Austen",
+      grade: "10",
+      contact: "kate@example.com",
+      address: "Oceanic Flight 815, Springfield",
+      parent: "Diane Janssen",
+      marks: { Math: 85, Science: 88, History: 82, English: 89 },
+    },
+    {
+      id: 12,
+      name: "Luke Skywalker",
+      grade: "9",
+      contact: "luke@example.com",
+      address: "Tatooine, Springfield",
+      parent: "Darth Vader",
+      marks: { Math: 80, Science: 82, History: 78, English: 81 },
+    },
+    {
+      id: 13,
+      name: "Michael Scott",
+      grade: "12",
+      contact: "michael@example.com",
+      address: "Dunder Mifflin, Springfield",
+      parent: "Mr. Scott",
+      marks: { Math: 70, Science: 65, History: 72, English: 75 },
+    },
+    {
+      id: 14,
+      name: "Neo Anderson",
+      grade: "11",
+      contact: "neo@example.com",
+      address: "The Matrix, Springfield",
+      parent: "The Architect",
+      marks: { Math: 99, Science: 99, History: 99, English: 99 },
+    },
+    {
+      id: 15,
+      name: "Olivia Dunham",
+      grade: "10",
+      contact: "olivia@example.com",
+      address: "Fringe Division, Springfield",
+      parent: "Walter Bishop",
+      marks: { Math: 92, Science: 95, History: 90, English: 93 },
+    },
+    {
+      id: 16,
+      name: "Peter Parker",
+      grade: "9",
+      contact: "peter@example.com",
+      address: "Queens, Springfield",
+      parent: "Aunt May",
+      marks: { Math: 94, Science: 96, History: 88, English: 91 },
+    },
+    {
+      id: 17,
+      name: "Quinn Fabray",
+      grade: "12",
+      contact: "quinn@example.com",
+      address: "McKinley High, Springfield",
+      parent: "Judy Fabray",
+      marks: { Math: 87, Science: 85, History: 92, English: 94 },
+    },
+    {
+      id: 18,
+      name: "Rachel Green",
+      grade: "11",
+      contact: "rachel@example.com",
+      address: "Central Perk, Springfield",
+      parent: "Dr. Leonard Green",
+      marks: { Math: 78, Science: 80, History: 85, English: 88 },
+    },
+    {
+      id: 19,
+      name: "Sheldon Cooper",
+      grade: "10",
+      contact: "sheldon@example.com",
+      address: "Caltech, Springfield",
+      parent: "Mary Cooper",
+      marks: { Math: 100, Science: 100, History: 95, English: 98 },
+    },
+    {
+      id: 20,
+      name: "Tony Stark",
+      grade: "12",
+      contact: "tony@example.com",
+      address: "Stark Tower, Springfield",
+      parent: "Howard Stark",
+      marks: { Math: 98, Science: 99, History: 92, English: 95 },
+    },
+    {
+      id: 21,
+      name: "Uhura Nyota",
+      grade: "11",
+      contact: "uhura@example.com",
+      address: "USS Enterprise, Springfield",
+      parent: "Mr. Uhura",
+      marks: { Math: 90, Science: 92, History: 88, English: 94 },
+    },
+    {
+      id: 22,
+      name: "Vito Corleone",
+      grade: "10",
+      contact: "vito@example.com",
+      address: "Corleone Compound, Springfield",
+      parent: "Antonio Andolini",
+      marks: { Math: 85, Science: 82, History: 90, English: 86 },
+    },
+    {
+      id: 23,
+      name: "Walter White",
+      grade: "9",
+      contact: "walter@example.com",
+      address: "308 Negra Arroyo Lane, Springfield",
+      parent: "Mr. White",
+      marks: { Math: 99, Science: 100, History: 85, English: 90 },
+    },
+    {
+      id: 24,
+      name: "Xena Warrior",
+      grade: "12",
+      contact: "xena@example.com",
+      address: "Amphipolis, Springfield",
+      parent: "Cyrene",
+      marks: { Math: 88, Science: 85, History: 95, English: 89 },
+    },
+    {
+      id: 25,
+      name: "Yoda Master",
+      grade: "11",
+      contact: "yoda@example.com",
+      address: "Dagobah, Springfield",
+      parent: "The Force",
+      marks: { Math: 95, Science: 95, History: 95, English: 95 },
+    },
+    {
+      id: 26,
+      name: "Zelda Princess",
+      grade: "10",
+      contact: "zelda@example.com",
+      address: "Hyrule Castle, Springfield",
+      parent: "King Rhoam",
+      marks: { Math: 92, Science: 90, History: 94, English: 93 },
+    },
+    {
+      id: 27,
+      name: "Arthur Dent",
+      grade: "9",
+      contact: "arthur@example.com",
+      address: "Earth, Mostly Harmless",
+      parent: "Mr. Dent",
+      marks: { Math: 75, Science: 72, History: 78, English: 80 },
+    },
+    {
+      id: 28,
+      name: "Buffy Summers",
+      grade: "12",
+      contact: "buffy@example.com",
+      address: "Sunnydale High, Springfield",
+      parent: "Joyce Summers",
+      marks: { Math: 89, Science: 87, History: 91, English: 92 },
+    },
+    {
+      id: 29,
+      name: "Clark Kent",
+      grade: "11",
+      contact: "clark@example.com",
+      address: "Smallville, Springfield",
+      parent: "Jonathan Kent",
+      marks: { Math: 94, Science: 93, History: 92, English: 95 },
+    },
+    {
+      id: 30,
+      name: "Dana Scully",
+      grade: "10",
+      contact: "dana@example.com",
+      address: "FBI Headquarters, Springfield",
+      parent: "William Scully",
+      marks: { Math: 96, Science: 98, History: 93, English: 97 },
     },
   ];
 
@@ -148,11 +372,27 @@ document.addEventListener("DOMContentLoaded", function () {
       userGreeting.textContent = `Welcome, ${studentData.name}`;
     }
 
-    if (!window.location.hash) {
+    // --- Role-based Route Guarding ---
+    const adminRoutes = ["#dashboard", "#students", "#teachers", "#calendar"];
+    const studentRoutes = ["#profile", "#marksheet", "#calendar"];
+    let currentHash = window.location.hash;
+
+    let isAuthorized = false;
+    if (currentUser.role === "admin" && adminRoutes.includes(currentHash)) {
+      isAuthorized = true;
+    } else if (
+      currentUser.role === "student" &&
+      studentRoutes.includes(currentHash)
+    ) {
+      isAuthorized = true;
+    }
+
+    // If there's no hash or the user is on an unauthorized page, redirect to their default.
+    if (!currentHash || !isAuthorized) {
       window.location.hash =
         currentUser.role === "admin" ? "#dashboard" : "#profile";
     } else {
-      showSection(window.location.hash);
+      showSection(currentHash);
     }
   }
 
@@ -283,6 +523,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <tbody id="student-list" class="text-gray-700"></tbody>
                     </table>
                 </div>
+                <div id="pagination-controls" class="flex justify-between items-center mt-4"></div>
             </div>`;
 
     setupStudentCrud();
@@ -462,6 +703,79 @@ document.addEventListener("DOMContentLoaded", function () {
     const gradeFilter = document.getElementById("gradeFilter");
     const studentSearch = document.getElementById("studentSearch");
     const studentList = document.getElementById("student-list");
+    const paginationControls = document.getElementById("pagination-controls");
+
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function displayStudents() {
+      const filterGrade = gradeFilter.value;
+      const searchTerm = studentSearch.value;
+      let filteredStudents = students;
+
+      if (filterGrade !== "All Grades" && filterGrade) {
+        filteredStudents = filteredStudents.filter(
+          (s) => s.grade === filterGrade
+        );
+      }
+      if (searchTerm) {
+        filteredStudents = filteredStudents.filter((s) =>
+          s.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
+
+      const totalPages = Math.ceil(filteredStudents.length / rowsPerPage);
+      const startIndex = (currentPage - 1) * rowsPerPage;
+      const paginatedStudents = filteredStudents.slice(
+        startIndex,
+        startIndex + rowsPerPage
+      );
+
+      studentList.innerHTML =
+        paginatedStudents.length > 0
+          ? paginatedStudents
+              .map(
+                (s) => `
+                <tr class="border-b border-gray-200 hover:bg-gray-50" data-id="${s.id}">
+                    <td class="py-3 px-4">${s.id}</td><td class="py-3 px-4">${s.name}</td><td class="py-3 px-4">${s.grade}</td><td class="py-3 px-4">${s.contact}</td>
+                    <td class="py-3 px-4"><button class="text-blue-500 hover:text-blue-700 mr-2 edit-btn"><i class="fas fa-edit"></i></button><button class="text-red-500 hover:text-red-700 delete-btn"><i class="fas fa-trash"></i></button></td>
+                </tr>`
+              )
+              .join("")
+          : `<tr><td colspan="5" class="text-center py-4">No students found.</td></tr>`;
+
+      setupPagination(totalPages);
+    }
+
+    function setupPagination(totalPages) {
+      paginationControls.innerHTML = `
+                <button id="prev-page" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed" ${
+                  currentPage === 1 ? "disabled" : ""
+                }>Previous</button>
+                <span class="text-gray-700">Page ${currentPage} of ${
+        totalPages > 0 ? totalPages : 1
+      }</span>
+                <button id="next-page" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed" ${
+                  currentPage === totalPages || totalPages === 0
+                    ? "disabled"
+                    : ""
+                }>Next</button>
+            `;
+
+      document.getElementById("prev-page").addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          displayStudents();
+        }
+      });
+
+      document.getElementById("next-page").addEventListener("click", () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          displayStudents();
+        }
+      });
+    }
 
     function populateGradeFilter() {
       const grades = [
@@ -473,39 +787,13 @@ document.addEventListener("DOMContentLoaded", function () {
         .join("");
     }
 
-    function renderStudentsList() {
-      const filterGrade = gradeFilter.value;
-      const searchTerm = studentSearch.value;
-      let filteredStudents = students;
-      if (filterGrade !== "All Grades" && filterGrade)
-        filteredStudents = filteredStudents.filter(
-          (s) => s.grade === filterGrade
-        );
-      if (searchTerm)
-        filteredStudents = filteredStudents.filter((s) =>
-          s.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-
-      studentList.innerHTML =
-        filteredStudents.length > 0
-          ? filteredStudents
-              .map(
-                (s) => `
-                <tr class="border-b border-gray-200 hover:bg-gray-50" data-id="${s.id}">
-                    <td class="py-3 px-4">${s.id}</td><td class="py-3 px-4">${s.name}</td><td class="py-3 px-4">${s.grade}</td><td class="py-3 px-4">${s.contact}</td>
-                    <td class="py-3 px-4"><button class="text-blue-500 hover:text-blue-700 mr-2 edit-btn"><i class="fas fa-edit"></i></button><button class="text-red-500 hover:text-red-700 delete-btn"><i class="fas fa-trash"></i></button></td>
-                </tr>`
-              )
-              .join("")
-          : `<tr><td colspan="5" class="text-center py-4">No students found.</td></tr>`;
-    }
-
     document
       .getElementById("addStudentBtn")
       .addEventListener("click", () => openStudentModal());
-    document
-      .getElementById("saveStudentBtn")
-      .addEventListener("click", saveStudent);
+    document.getElementById("saveStudentBtn").addEventListener("click", () => {
+      saveStudent();
+      displayStudents();
+    });
     document
       .getElementById("closeStudentModal")
       .addEventListener("click", () => studentModal.classList.add("hidden"));
@@ -513,14 +801,23 @@ document.addEventListener("DOMContentLoaded", function () {
     studentList.addEventListener("click", (e) => {
       const id = e.target.closest("tr")?.dataset.id;
       if (e.target.closest(".edit-btn")) openStudentModal(id);
-      if (e.target.closest(".delete-btn")) deleteStudent(id);
+      if (e.target.closest(".delete-btn")) {
+        deleteStudent(id);
+        displayStudents();
+      }
     });
 
-    gradeFilter.addEventListener("change", renderStudentsList);
-    studentSearch.addEventListener("input", renderStudentsList);
+    gradeFilter.addEventListener("change", () => {
+      currentPage = 1;
+      displayStudents();
+    });
+    studentSearch.addEventListener("input", () => {
+      currentPage = 1;
+      displayStudents();
+    });
 
     populateGradeFilter();
-    renderStudentsList();
+    displayStudents();
   }
 
   function openStudentModal(id = null) {
@@ -564,7 +861,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
     studentModal.classList.add("hidden");
-    renderStudentManagement();
     const statElement = document.getElementById("total-students-stat");
     if (statElement) {
       statElement.textContent = students.length;
@@ -573,7 +869,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function deleteStudent(id) {
     students = students.filter((s) => s.id != id);
-    renderStudentManagement();
     const statElement = document.getElementById("total-students-stat");
     if (statElement) {
       statElement.textContent = students.length;
