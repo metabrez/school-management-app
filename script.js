@@ -1,8 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
   // --- STATE MANAGEMENT ---
+  // Stores the currently logged-in user object
   let currentUser = null;
 
   // --- DOM ELEMENTS ---
+  // References to key HTML elements for manipulation
   const loginPage = document.getElementById("login-page");
   const appContainer = document.getElementById("app-container");
   const loginForm = document.getElementById("login-form");
@@ -15,6 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const teacherModal = document.getElementById("teacherModal");
 
   // --- MOCK DATA ---
+  // In-memory data for users, students, and teachers.
+  // In a real application, this would come from a backend API or database.
   const users = [
     { username: "admin", password: "password", role: "admin" },
     {
@@ -356,46 +360,52 @@ document.addEventListener("DOMContentLoaded", function () {
   ];
 
   // --- LOGIN/LOGOUT LOGIC ---
+  // Handles user login form submission
   loginForm.addEventListener("submit", function (e) {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
+    // Find if a user with matching credentials exists
     const user = users.find(
       (u) => u.username === username && u.password === password
     );
 
     if (user) {
-      currentUser = user;
-      sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
-      initializeApp();
+      currentUser = user; // Set current user
+      sessionStorage.setItem("currentUser", JSON.stringify(currentUser)); // Store user in session storage
+      initializeApp(); // Initialize the main application view
     } else {
-      loginError.classList.remove("hidden");
+      loginError.classList.remove("hidden"); // Show login error message
     }
   });
 
+  // Handles user logout
   logoutBtn.addEventListener("click", function () {
-    currentUser = null;
-    sessionStorage.removeItem("currentUser");
-    window.location.hash = "#home";
-    initializePublicView();
+    currentUser = null; // Clear current user
+    sessionStorage.removeItem("currentUser"); // Remove user from session storage
+    window.location.hash = "#home"; // Redirect to public home page
+    initializePublicView(); // Show the public view
   });
 
+  // Displays the login screen and hides the app container
   function showLoginScreen() {
     appContainer.classList.add("hidden");
     loginPage.classList.remove("hidden");
-    sidebar.innerHTML = "";
-    loginError.classList.add("hidden");
-    loginForm.reset();
+    sidebar.innerHTML = ""; // Clear sidebar content
+    loginError.classList.add("hidden"); // Hide any previous login errors
+    loginForm.reset(); // Reset the login form
   }
 
   // --- INITIALIZATION ---
+  // Initializes the application view after a successful login
   function initializeApp() {
-    loginPage.classList.add("hidden");
-    appContainer.classList.remove("hidden");
+    loginPage.classList.add("hidden"); // Hide login page
+    appContainer.classList.remove("hidden"); // Show app container
 
-    buildSidebar(currentUser.role);
-    setupNavigation();
+    buildSidebar(currentUser.role); // Build sidebar based on user role
+    setupNavigation(); // Set up navigation listeners
 
+    // Display welcome message based on user role
     if (currentUser.role === "admin") {
       userGreeting.textContent = "Welcome, Admin";
     } else if (currentUser.role === "student") {
@@ -403,6 +413,7 @@ document.addEventListener("DOMContentLoaded", function () {
       userGreeting.textContent = `Welcome, ${studentData.name}`;
     }
 
+    // Define routes accessible by admin and student roles
     const adminRoutes = [
       "#home",
       "#news",
@@ -426,6 +437,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentHash = window.location.hash;
 
     let isAuthorized = false;
+    // Check if the current hash is authorized for the current user's role
     if (currentUser.role === "admin" && adminRoutes.includes(currentHash)) {
       isAuthorized = true;
     } else if (
@@ -435,23 +447,27 @@ document.addEventListener("DOMContentLoaded", function () {
       isAuthorized = true;
     }
 
+    // Redirect to home if no hash or unauthorized hash
     if (!currentHash || !isAuthorized) {
       window.location.hash = "#home";
     } else {
-      showSection(currentHash);
+      showSection(currentHash); // Show the requested section
     }
   }
 
+  // Initializes the public (not logged in) view
   function initializePublicView() {
-    loginPage.classList.remove("hidden");
-    appContainer.classList.add("hidden");
-    setupPublicNavigation();
-    showPublicSection(window.location.hash);
+    loginPage.classList.remove("hidden"); // Show login page
+    appContainer.classList.add("hidden"); // Hide app container
+    setupPublicNavigation(); // Set up public navigation listeners
+    showPublicSection(window.location.hash); // Show the current public section
   }
 
+  // Dynamically builds the sidebar navigation based on the user's role
   function buildSidebar(role) {
     let sidebarContent = `<div class="px-8 py-6 border-b border-gray-700"><h2 class="text-2xl font-semibold">School Portal</h2></div><nav class="flex-1 px-4 py-4">`;
 
+    // Always include Home, News, and About Us for all roles
     sidebarContent += `
             <a href="#home" class="nav-link flex items-center px-4 py-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-home mr-3"></i> Home</a>
             <a href="#news" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-newspaper mr-3"></i> News</a>
@@ -467,6 +483,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `;
 
+    // Add role-specific navigation items
     if (role === "admin") {
       sidebarContent += `
                 <a href="#dashboard" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-tachometer-alt mr-3"></i> Dashboard</a>
@@ -483,54 +500,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sidebarContent += `<a href="#calendar" class="nav-link flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-700 rounded-lg"><i class="fas fa-calendar-alt mr-3"></i> Calendar</a>`;
     sidebarContent += `</nav>`;
-    sidebar.innerHTML = sidebarContent;
+    sidebar.innerHTML = sidebarContent; // Inject generated HTML into sidebar
   }
 
   // --- NAVIGATION ---
+  // Sets up event listeners for internal navigation links (when logged in)
   function setupNavigation() {
+    // Listen for hash changes in the URL to show/hide sections
     window.addEventListener("hashchange", () => {
       if (currentUser) showSection(window.location.hash);
     });
 
+    // Handle clicks within the sidebar for navigation and dropdowns
     sidebar.addEventListener("click", function (e) {
       const link = e.target.closest(".nav-link");
       if (link) {
-        e.preventDefault();
-        window.location.hash = link.getAttribute("href");
+        e.preventDefault(); // Prevent default link behavior
+        window.location.hash = link.getAttribute("href"); // Update URL hash
       }
 
       const toggle = e.target.closest("#about-us-toggle");
       if (toggle) {
         const dropdown = document.getElementById("about-us-dropdown");
         const icon = toggle.querySelector(".fa-chevron-down");
-        dropdown.classList.toggle("hidden");
-        icon.classList.toggle("rotate-180");
+        dropdown.classList.toggle("hidden"); // Toggle dropdown visibility
+        icon.classList.toggle("rotate-180"); // Rotate icon for visual feedback
       }
     });
   }
 
+  // Sets up event listeners for public navigation links (when not logged in)
   function setupPublicNavigation() {
-    const publicHeader = document.querySelector("#login-page header"); // Updated to target the header
+    const publicHeader = document.querySelector("#login-page header"); // Target the header for public navigation clicks
     const aboutUsPublicMenu = document.getElementById("about-us-public-menu");
     if (publicHeader) {
-      // Updated condition
       publicHeader.addEventListener("click", function (e) {
-        // Event listener on the header
         const link = e.target.closest(".public-nav-link");
         if (link) {
-          e.preventDefault();
-          window.location.hash = link.getAttribute("href");
+          e.preventDefault(); // Prevent default link behavior
+          window.location.hash = link.getAttribute("href"); // Update URL hash
         }
 
         const toggle = e.target.closest("#about-us-public-toggle");
         if (toggle) {
           document
             .getElementById("about-us-public-dropdown")
-            .classList.toggle("hidden");
+            .classList.toggle("hidden"); // Toggle dropdown visibility
         }
       });
 
-      // Close dropdown if clicked outside
+      // Close dropdown if clicked outside of the About Us menu area
       window.addEventListener("click", function (e) {
         if (!aboutUsPublicMenu.contains(e.target)) {
           document
@@ -539,16 +558,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     }
+    // Listen for hash changes to show/hide public sections
     window.addEventListener("hashchange", () => {
       if (!currentUser) showPublicSection(window.location.hash);
     });
   }
 
+  // Hides all sections and displays the one corresponding to the given hash
   function showSection(hash) {
     const sections = document.querySelectorAll("#app-container .section");
     const defaultHash = "#home";
     const normalizedHash = hash || defaultHash;
 
+    // Hide all sections and clear their content
     sections.forEach((section) => {
       section.innerHTML = "";
       section.classList.remove("active");
@@ -558,10 +580,12 @@ document.addEventListener("DOMContentLoaded", function () {
       `#app-container ${normalizedHash}`
     );
     if (activeSection) {
-      activeSection.classList.add("active");
+      activeSection.classList.add("active"); // Show the active section
+      // Update the page title in the header
       pageTitle.textContent =
         normalizedHash.charAt(1).toUpperCase() + normalizedHash.slice(2);
 
+      // Render content based on the active section and user role
       const studentData =
         currentUser.role === "student"
           ? students.find((s) => s.id === currentUser.studentId)
@@ -604,21 +628,24 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // Hides all public sections and displays the one corresponding to the given hash
   function showPublicSection(hash) {
     const sections = document.querySelectorAll(".public-section");
     const defaultHash = "#home";
     const normalizedHash = hash || defaultHash;
 
-    sections.forEach((section) => section.classList.add("hidden"));
+    sections.forEach((section) => section.classList.add("hidden")); // Hide all public sections
 
     const activeSectionId = `${normalizedHash.substring(1)}-public`;
     let activeSection = document.getElementById(activeSectionId);
+    // Special handling for the login page, as its ID doesn't follow the -public convention
     if (normalizedHash === "#login") {
       activeSection = document.getElementById("login-container");
     }
 
     if (activeSection) {
-      activeSection.classList.remove("hidden");
+      activeSection.classList.remove("hidden"); // Show the active public section
+      // Render content for specific public sections
       switch (normalizedHash) {
         case "#home":
           renderHome(document.getElementById("home-public"));
@@ -634,6 +661,7 @@ document.addEventListener("DOMContentLoaded", function () {
           break;
       }
     } else {
+      // If no valid hash, default to home-public
       const homeSection = document.getElementById("home-public");
       homeSection.classList.remove("hidden");
       renderHome(homeSection);
@@ -641,6 +669,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // --- RENDER FUNCTIONS ---
+  // Renders the content for the Home section
   function renderHome(container) {
     container.innerHTML = `
             <div class="bg-white p-8 rounded-lg shadow-lg text-center">
@@ -650,6 +679,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
   }
 
+  // Renders the content for the News section
   function renderNews(container) {
     container.innerHTML = `
             <div class="bg-white p-8 rounded-lg shadow-lg">
@@ -675,6 +705,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
   }
 
+  // Renders the content for the Introduction (About Us) section
   function renderIntro(container) {
     container.innerHTML = `
             <div class="bg-white p-8 rounded-lg shadow-lg">
@@ -694,6 +725,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
   }
 
+  // Renders the content for the Faculty section, displaying teacher cards
   function renderFaculty(container) {
     let facultyCards = teachers
       .map(
@@ -720,6 +752,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
   }
 
+  // Renders the Admin Dashboard with key statistics
   function renderAdminDashboard() {
     const dashboard = document.getElementById("dashboard");
     dashboard.innerHTML = `
@@ -739,6 +772,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>`;
   }
 
+  // Renders the Student Management section with list, filters, and add button
   function renderStudentManagement() {
     const container = document.getElementById("students");
     container.innerHTML = `
@@ -766,9 +800,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div id="pagination-controls" class="flex justify-between items-center mt-4"></div>
             </div>`;
 
-    setupStudentCrud();
+    setupStudentCrud(); // Initialize CRUD functionalities for students
   }
 
+  // Renders the Teacher Management section with list and add button
   function renderTeacherManagement() {
     const container = document.getElementById("teachers");
     container.innerHTML = `
@@ -785,10 +820,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             </div>`;
 
-    setupTeacherCrud();
+    setupTeacherCrud(); // Initialize CRUD functionalities for teachers
   }
 
   // --- STUDENT-SPECIFIC RENDER FUNCTIONS ---
+  // Renders the student's personal profile
   function renderStudentProfile(studentData) {
     const container = document.getElementById("profile");
     if (!studentData) {
@@ -828,6 +864,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>`;
   }
 
+  // Renders the student's marksheet with subject-wise marks, total, and average
   function renderMarksheet(studentData) {
     const container = document.getElementById("marksheet");
     if (!studentData) {
@@ -878,11 +915,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
             </div>`;
 
+    // Attach event listener for PDF download
     document
       .getElementById("download-marksheet-btn")
       .addEventListener("click", () => downloadMarksheetAsPDF(studentData));
   }
 
+  // Renders the student's ID card
   function renderIdCard(studentData) {
     const container = document.getElementById("idcard");
     if (!studentData) {
@@ -916,24 +955,26 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `;
 
+    // Attach event listener for ID card PDF download
     document
       .getElementById("download-idcard-btn")
       .addEventListener("click", () => downloadIdCardAsPDF(studentData));
   }
 
   // --- PDF DOWNLOAD FUNCTION ---
+  // Generates and downloads a PDF of the student's marksheet
   function downloadMarksheetAsPDF(studentData) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // --- HEADER ---
+    // Add header to PDF
     doc.setFontSize(22);
     doc.setFont("helvetica", "bold");
     doc.text("Hamro School", doc.internal.pageSize.getWidth() / 2, 22, {
       align: "center",
     });
 
-    // --- DOCUMENT TITLE & STUDENT INFO ---
+    // Add document title and student information
     doc.setFontSize(16);
     doc.setFont("helvetica", "normal");
     doc.text("Official Marksheet", doc.internal.pageSize.getWidth() / 2, 32, {
@@ -944,6 +985,7 @@ document.addEventListener("DOMContentLoaded", function () {
     doc.text(`Grade: ${studentData.grade}`, 14, 51);
     doc.text(`Academic Year: ${studentData.academicYear}`, 14, 57);
 
+    // Prepare table data for marksheet
     const tableColumn = ["Subject", "Marks (out of 100)", "Status"];
     const tableRows = [];
 
@@ -954,12 +996,13 @@ document.addEventListener("DOMContentLoaded", function () {
       tableRows.push(rowData);
     });
 
+    // Generate table using jspdf-autotable
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: 65,
+      startY: 65, // Start table below student info
       didDrawPage: function (data) {
-        // --- FOOTER ---
+        // Add footer to each page
         doc.setFontSize(10);
         const footerText = `© 2025 Hamro School. All rights reserved.`;
         doc.text(
@@ -978,7 +1021,7 @@ document.addEventListener("DOMContentLoaded", function () {
               .toString(),
             styles: { halign: "center" },
           },
-          "",
+          "", // Empty cell for status column
         ],
         [
           { content: "Average Percentage:", styles: { halign: "right" } },
@@ -989,7 +1032,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ).toFixed(2)}%`,
             styles: { halign: "center" },
           },
-          "",
+          "", // Empty cell for status column
         ],
       ],
       footStyles: {
@@ -997,48 +1040,55 @@ document.addEventListener("DOMContentLoaded", function () {
       },
     });
 
+    // Save the PDF
     doc.save(`Marksheet_${studentData.name.replace(/ /g, "_")}.pdf`);
   }
 
+  // Generates and downloads a PDF of the student's ID card
   function downloadIdCardAsPDF(studentData) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    // --- ID CARD DESIGN ---
+    // Design the ID card layout
     doc.setFillColor(243, 244, 246); // Light gray background
-    doc.roundedRect(10, 10, 85, 55, 3, 3, "F");
+    doc.roundedRect(10, 10, 85, 55, 3, 3, "F"); // Rounded rectangle for the card
 
+    // Add school name
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.text("Hamro School", 52.5, 20, { align: "center" });
 
-    // Placeholder for image
+    // Placeholder for student image (drawing a grey rectangle with 'Photo' text)
     doc.setFillColor(229, 231, 235);
     doc.rect(15, 25, 30, 30, "F");
     doc.setTextColor(156, 163, 175);
     doc.text("Photo", 30, 40, { align: "center" });
 
-    doc.setTextColor(0, 0, 0);
+    // Add student details
+    doc.setTextColor(0, 0, 0); // Reset text color to black
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text(studentData.name, 50, 30);
+    doc.text(studentData.name, 50, 30); // Student Name
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text(`ID: ${studentData.id}`, 50, 38);
-    doc.text(`Grade: ${studentData.grade}`, 50, 44);
-    doc.text(`Year: ${studentData.academicYear}`, 50, 50);
+    doc.text(`ID: ${studentData.id}`, 50, 38); // Student ID
+    doc.text(`Grade: ${studentData.grade}`, 50, 44); // Student Grade
+    doc.text(`Year: ${studentData.academicYear}`, 50, 50); // Academic Year
 
+    // Save the PDF
     doc.save(`ID_Card_${studentData.name.replace(/ /g, "_")}.pdf`);
   }
 
   // --- SHARED FUNCTIONS ---
+  // Renders a placeholder for the Calendar section
   function renderCalendar() {
     const container = document.getElementById("calendar");
     container.innerHTML = `<div class="bg-white p-6 rounded-lg shadow"><h2 class="text-xl font-semibold text-gray-800 mb-4">Events Calendar</h2><p>A dynamic calendar would be displayed here, showing school events, holidays, and exam schedules.</p></div>`;
   }
 
-  // --- CRUD & EVENT SETUP ---
+  // --- CRUD & EVENT SETUP (for Admin Panel) ---
+  // Sets up functionalities for Student Management (add, edit, delete, filter, search, paginate)
   function setupStudentCrud() {
     const gradeFilter = document.getElementById("gradeFilter");
     const studentSearch = document.getElementById("studentSearch");
@@ -1048,16 +1098,19 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPage = 1;
     const rowsPerPage = 10;
 
+    // Displays the list of students based on current filters and pagination
     function displayStudents() {
       const filterGrade = gradeFilter.value;
       const searchTerm = studentSearch.value;
       let filteredStudents = students;
 
+      // Apply grade filter
       if (filterGrade !== "All Grades" && filterGrade) {
         filteredStudents = filteredStudents.filter(
           (s) => s.grade === filterGrade
         );
       }
+      // Apply search by name
       if (searchTerm) {
         filteredStudents = filteredStudents.filter((s) =>
           s.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -1071,6 +1124,7 @@ document.addEventListener("DOMContentLoaded", function () {
         startIndex + rowsPerPage
       );
 
+      // Render student list rows
       studentList.innerHTML =
         paginatedStudents.length > 0
           ? paginatedStudents
@@ -1084,9 +1138,10 @@ document.addEventListener("DOMContentLoaded", function () {
               .join("")
           : `<tr><td colspan="5" class="text-center py-4">No students found.</td></tr>`;
 
-      setupPagination(totalPages);
+      setupPagination(totalPages); // Update pagination controls
     }
 
+    // Sets up the pagination buttons and displays current page info
     function setupPagination(totalPages) {
       paginationControls.innerHTML = `
                 <button id="prev-page" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed" ${
@@ -1102,6 +1157,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }>Next</button>
             `;
 
+      // Event listeners for pagination buttons
       document.getElementById("prev-page").addEventListener("click", () => {
         if (currentPage > 1) {
           currentPage--;
@@ -1117,6 +1173,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
+    // Populates the grade filter dropdown with unique grades
     function populateGradeFilter() {
       const grades = [
         "All Grades",
@@ -1127,46 +1184,53 @@ document.addEventListener("DOMContentLoaded", function () {
         .join("");
     }
 
+    // Event listener to open add student modal
     document
       .getElementById("addStudentBtn")
       .addEventListener("click", () => openStudentModal());
+    // Event listener to save student (add/edit)
     document.getElementById("saveStudentBtn").addEventListener("click", () => {
       saveStudent();
-      displayStudents();
+      displayStudents(); // Re-render students after saving
     });
+    // Event listener to close student modal
     document
       .getElementById("closeStudentModal")
       .addEventListener("click", () => studentModal.classList.add("hidden"));
 
+    // Event delegation for edit and delete buttons on student list
     studentList.addEventListener("click", (e) => {
       const id = e.target.closest("tr")?.dataset.id;
       if (e.target.closest(".edit-btn")) openStudentModal(id);
       if (e.target.closest(".delete-btn")) {
         deleteStudent(id);
-        displayStudents();
+        displayStudents(); // Re-render students after deleting
       }
     });
 
+    // Event listeners for filter and search input changes
     gradeFilter.addEventListener("change", () => {
-      currentPage = 1;
+      currentPage = 1; // Reset to first page on filter change
       displayStudents();
     });
     studentSearch.addEventListener("input", () => {
-      currentPage = 1;
+      currentPage = 1; // Reset to first page on search change
       displayStudents();
     });
 
-    populateGradeFilter();
-    displayStudents();
+    populateGradeFilter(); // Initialize grade filter options
+    displayStudents(); // Initial display of students
   }
 
+  // Opens the student modal for adding a new student or editing an existing one
   function openStudentModal(id = null) {
     const form = document.getElementById("studentForm");
-    form.reset();
-    document.getElementById("studentId").value = "";
+    form.reset(); // Clear form fields
+    document.getElementById("studentId").value = ""; // Clear hidden ID field
     if (id) {
       const student = students.find((s) => s.id == id);
       document.getElementById("studentModalTitle").textContent = "Edit Student";
+      // Populate form with student data for editing
       document.getElementById("studentId").value = student.id;
       document.getElementById("studentName").value = student.name;
       document.getElementById("studentGrade").value = student.grade;
@@ -1176,58 +1240,85 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       document.getElementById("studentModalTitle").textContent = "Add Student";
     }
-    studentModal.classList.remove("hidden");
+    studentModal.classList.remove("hidden"); // Show the modal
   }
 
+  // Saves (adds or updates) student data
   function saveStudent() {
     const id = document.getElementById("studentId").value;
     const name = document.getElementById("studentName").value;
     const grade = document.getElementById("studentGrade").value;
     const academicYear = document.getElementById("studentAcademicYear").value;
     const contact = document.getElementById("studentContact").value;
-    if (!name || !grade || !academicYear || !contact) return;
+
+    // Validate Name (only alphabets and spaces)
+    const nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(name)) {
+      alert("Student name must contain only alphabetic characters and spaces.");
+      return; // Stop the function if validation fails
+    }
+
+    // Validate Email Format
+    const emailRegex = /^\S+@\S+\.\S+$/; // Basic email regex
+    if (!emailRegex.test(contact)) {
+      alert("Please enter a valid email address for student contact.");
+      return; // Stop the function if validation fails
+    }
+
+    // Basic check for all required fields
+    if (!name || !grade || !academicYear || !contact) {
+      alert("All fields are required for student information.");
+      return;
+    }
 
     if (id) {
+      // If ID exists, update existing student
       const index = students.findIndex((s) => s.id == id);
       students[index] = {
-        ...students[index],
+        ...students[index], // Keep existing properties
         name,
         grade,
         academicYear,
         contact,
       };
     } else {
+      // If no ID, add new student
       const newId =
-        students.length > 0 ? Math.max(...students.map((s) => s.id)) + 1 : 1;
+        students.length > 0 ? Math.max(...students.map((s) => s.id)) + 1 : 1; // Generate new ID
       students.push({
         id: newId,
         name,
         grade,
         academicYear,
         contact,
-        address: "",
+        address: "", // Default empty values for new student
         parent: "",
         marks: {},
       });
     }
-    studentModal.classList.add("hidden");
+    studentModal.classList.add("hidden"); // Hide the modal
+    // Update dashboard student count if element exists
     const statElement = document.getElementById("total-students-stat");
     if (statElement) {
       statElement.textContent = students.length;
     }
   }
 
+  // Deletes a student by ID
   function deleteStudent(id) {
-    students = students.filter((s) => s.id != id);
+    students = students.filter((s) => s.id != id); // Filter out the student to be deleted
+    // Update dashboard student count if element exists
     const statElement = document.getElementById("total-students-stat");
     if (statElement) {
       statElement.textContent = students.length;
     }
   }
 
+  // Sets up functionalities for Teacher Management (add, edit, delete)
   function setupTeacherCrud() {
     const teacherList = document.getElementById("teacher-list");
 
+    // Renders the list of teachers in the table
     function renderTeachersList() {
       teacherList.innerHTML = teachers
         .map(
@@ -1240,32 +1331,38 @@ document.addEventListener("DOMContentLoaded", function () {
         .join("");
     }
 
+    // Event listener to open add teacher modal
     document
       .getElementById("addTeacherBtn")
       .addEventListener("click", () => openTeacherModal());
+    // Event listener to save teacher (add/edit)
     document
       .getElementById("saveTeacherBtn")
       .addEventListener("click", saveTeacher);
+    // Event listener to close teacher modal
     document
       .getElementById("closeTeacherModal")
       .addEventListener("click", () => teacherModal.classList.add("hidden"));
 
+    // Event delegation for edit and delete buttons on teacher list
     teacherList.addEventListener("click", (e) => {
       const id = e.target.closest("tr")?.dataset.id;
       if (e.target.closest(".edit-btn")) openTeacherModal(id);
       if (e.target.closest(".delete-btn")) deleteTeacher(id);
     });
 
-    renderTeachersList();
+    renderTeachersList(); // Initial display of teachers
   }
 
+  // Opens the teacher modal for adding a new teacher or editing an existing one
   function openTeacherModal(id = null) {
     const form = document.getElementById("teacherForm");
-    form.reset();
-    document.getElementById("teacherId").value = "";
+    form.reset(); // Clear form fields
+    document.getElementById("teacherId").value = ""; // Clear hidden ID field
     if (id) {
       const teacher = teachers.find((t) => t.id == id);
       document.getElementById("teacherModalTitle").textContent = "Edit Teacher";
+      // Populate form with teacher data for editing
       document.getElementById("teacherId").value = teacher.id;
       document.getElementById("teacherName").value = teacher.name;
       document.getElementById("teacherSubject").value = teacher.subject;
@@ -1273,35 +1370,42 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       document.getElementById("teacherModalTitle").textContent = "Add Teacher";
     }
-    teacherModal.classList.remove("hidden");
+    teacherModal.classList.remove("hidden"); // Show the modal
   }
 
+  // Saves (adds or updates) teacher data
   function saveTeacher() {
     const id = document.getElementById("teacherId").value;
     const name = document.getElementById("teacherName").value;
     const subject = document.getElementById("teacherSubject").value;
     const contact = document.getElementById("teacherContact").value;
+    // Basic check for all required fields
     if (!name || !subject || !contact) return;
 
     if (id) {
+      // If ID exists, update existing teacher
       const index = teachers.findIndex((t) => t.id == id);
       teachers[index] = { ...teachers[index], name, subject, contact };
     } else {
+      // If no ID, add new teacher
       const newId =
-        teachers.length > 0 ? Math.max(...teachers.map((t) => t.id)) + 1 : 1;
+        teachers.length > 0 ? Math.max(...teachers.map((t) => t.id)) + 1 : 1; // Generate new ID
       teachers.push({ id: newId, name, subject, contact });
     }
-    teacherModal.classList.add("hidden");
-    renderTeacherManagement();
+    teacherModal.classList.add("hidden"); // Hide the modal
+    renderTeacherManagement(); // Re-render teachers list
+    // Update dashboard teacher count if element exists
     const statElement = document.getElementById("total-teachers-stat");
     if (statElement) {
       statElement.textContent = teachers.length;
     }
   }
 
+  // Deletes a teacher by ID
   function deleteTeacher(id) {
-    teachers = teachers.filter((t) => t.id != id);
-    renderTeacherManagement();
+    teachers = teachers.filter((t) => t.id != id); // Filter out the teacher to be deleted
+    renderTeacherManagement(); // Re-render teachers list
+    // Update dashboard teacher count if element exists
     const statElement = document.getElementById("total-teachers-stat");
     if (statElement) {
       statElement.textContent = teachers.length;
@@ -1309,11 +1413,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // --- CHECK SESSION ON PAGE LOAD ---
+  // Checks if a user is already logged in from a previous session
   const savedUser = sessionStorage.getItem("currentUser");
   if (savedUser) {
-    currentUser = JSON.parse(savedUser);
-    initializeApp();
+    currentUser = JSON.parse(savedUser); // Restore current user from session storage
+    initializeApp(); // Initialize app for logged-in user
   } else {
-    initializePublicView();
+    initializePublicView(); // Show public view if no user is logged in
   }
 });
