@@ -1,358 +1,126 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // --- STATE MANAGEMENT ---
-  let currentUser = null;
+  // --- DOM ELEMENTS (Simplified for Public View Only) ---
+  // We only need elements relevant to the public sections now.
+  const publicPageContainer = document.getElementById("public-page-container"); // The main public page container
 
-  // --- DOM ELEMENTS ---
-  const loginPage = document.getElementById("login-page");
-  const appContainer = document.getElementById("app-container");
-  const loginForm = document.getElementById("login-form");
-  const loginError = document.getElementById("login-error");
-  const logoutBtn = document.getElementById("logout-btn");
-  const sidebar = document.getElementById("sidebar");
-  const pageTitle = document.getElementById("page-title");
-  const userGreeting = document.getElementById("user-greeting");
-  const studentModal = document.getElementById("studentModal");
-  const teacherModal = document.getElementById("teacherModal");
+  // No login/logout elements needed for a public-only view
+  // const loginForm = document.getElementById("login-form");
+  // const loginError = document.getElementById("login-error");
+  // const logoutBtn = document.getElementById("logout-btn");
+  // const sidebar = document.getElementById("sidebar");
+  // const pageTitle = document.getElementById("page-title");
+  // const userGreeting = document.getElementById("user-greeting");
+  // const studentModal = document.getElementById("studentModal");
+  // const teacherModal = document.getElementById("teacherModal");
 
-  // --- MOCK DATA ---
-  const users = [
-    { username: "admin", password: "password", role: "admin" },
-    {
-      username: "student1",
-      password: "password",
-      role: "student",
-      studentId: 1,
-    },
-    {
-      username: "student2",
-      password: "password",
-      role: "student",
-      studentId: 2,
-    },
-  ];
+  // --- MOCK DATA (Not relevant for this public-only display, but keeping minimal structure) ---
+  // Users, students, teachers data is effectively unused as there's no login/admin features.
+  const users = []; // No users needed
+  let students = []; // No student data directly rendered
+  let teachers = []; // No teacher data directly rendered
 
-  let students = [
-    {
-      id: 1,
-      name: "Alice Johnson",
-      grade: "10",
-      academicYear: "2024-2025",
-      contact: "alice@example.com",
-      address: "123 Maple St, Springfield",
-      parent: "John Johnson",
-      marks: { Math: 95, Science: 88, History: 92, English: 94 },
-    },
-    {
-      id: 2,
-      name: "Bob Smith",
-      grade: "11",
-      academicYear: "2024-2025",
-      contact: "bob@example.com",
-      address: "456 Oak Ave, Springfield",
-      parent: "Jane Smith",
-      marks: { Math: 82, Science: 76, History: 88, English: 85 },
-    },
-    {
-      id: 3,
-      name: "Charlie Brown",
-      grade: "9",
-      academicYear: "2024-2025",
-      contact: "charlie@example.com",
-      address: "789 Pine Ln, Springfield",
-      parent: "Chris Brown",
-      marks: { Math: 78, Science: 81, History: 75, English: 80 },
-    },
-    {
-      id: 4,
-      name: "Diana Prince",
-      grade: "10",
-      academicYear: "2024-2025",
-      contact: "diana@example.com",
-      address: "101 Elm Ct, Springfield",
-      parent: "Diana Prince Sr.",
-      marks: { Math: 99, Science: 95, History: 98, English: 97 },
-    },
-    {
-      id: 5,
-      name: "Ethan Hunt",
-      grade: "12",
-      academicYear: "2024-2025",
-      contact: "ethan@example.com",
-      address: "212 Birch Rd, Springfield",
-      parent: "Ethan Hunt Sr.",
-      marks: { Math: 89, Science: 91, History: 85, English: 88 },
-    },
-    {
-      id: 6,
-      name: "Fiona Glenanne",
-      grade: "11",
-      academicYear: "2024-2025",
-      contact: "fiona@example.com",
-      address: "321 Cedar Dr, Springfield",
-      parent: "Michael Westen",
-      marks: { Math: 91, Science: 93, History: 89, English: 92 },
-    },
-    {
-      id: 7,
-      name: "George Costanza",
-      grade: "10",
-      academicYear: "2024-2025",
-      contact: "george@example.com",
-      address: "456 Walnut St, Springfield",
-      parent: "Frank Costanza",
-      marks: { Math: 72, Science: 68, History: 75, English: 78 },
-    },
-    {
-      id: 8,
-      name: "Harry Potter",
-      grade: "9",
-      academicYear: "2024-2025",
-      contact: "harry@example.com",
-      address: "4 Privet Drive, Springfield",
-      parent: "James Potter",
-      marks: { Math: 88, Science: 90, History: 85, English: 87 },
-    },
-    {
-      id: 9,
-      name: "Irene Adler",
-      grade: "12",
-      academicYear: "2024-2025",
-      contact: "irene@example.com",
-      address: "221B Baker St, Springfield",
-      parent: "Mr. Adler",
-      marks: { Math: 96, Science: 94, History: 97, English: 98 },
-    },
-    {
-      id: 10,
-      name: "Jack Sparrow",
-      grade: "11",
-      academicYear: "2024-2025",
-      contact: "jack@example.com",
-      address: "The Black Pearl, Springfield",
-      parent: "Captain Teague",
-      marks: { Math: 65, Science: 70, History: 80, English: 72 },
-    },
-    {
-      id: 11,
-      name: "Kate Austen",
-      grade: "10",
-      academicYear: "2024-2025",
-      contact: "kate@example.com",
-      address: "Oceanic Flight 815, Springfield",
-      parent: "Diane Janssen",
-      marks: { Math: 85, Science: 88, History: 82, English: 89 },
-    },
-    {
-      id: 12,
-      name: "Luke Skywalker",
-      grade: "9",
-      academicYear: "2024-2025",
-      contact: "luke@example.com",
-      address: "Tatooine, Springfield",
-      parent: "Darth Vader",
-      marks: { Math: 80, Science: 82, History: 78, English: 81 },
-    },
-    {
-      id: 13,
-      name: "Michael Scott",
-      grade: "12",
-      academicYear: "2024-2025",
-      contact: "michael@example.com",
-      address: "Dunder Mifflin, Springfield",
-      parent: "Mr. Scott",
-      marks: { Math: 70, Science: 65, History: 72, English: 75 },
-    },
-    {
-      id: 14,
-      name: "Neo Anderson",
-      grade: "11",
-      academicYear: "2024-2025",
-      contact: "neo@example.com",
-      address: "The Matrix, Springfield",
-      parent: "The Architect",
-      marks: { Math: 99, Science: 99, History: 99, English: 99 },
-    },
-    {
-      id: 15,
-      name: "Olivia Dunham",
-      grade: "10",
-      academicYear: "2024-2025",
-      contact: "olivia@example.com",
-      address: "Fringe Division, Springfield",
-      parent: "Walter Bishop",
-      marks: { Math: 92, Science: 95, History: 90, English: 93 },
-    },
-    {
-      id: 16,
-      name: "Peter Parker",
-      grade: "9",
-      academicYear: "2024-2025",
-      contact: "peter@example.com",
-      address: "Queens, Springfield",
-      parent: "Aunt May",
-      marks: { Math: 94, Science: 96, History: 88, English: 91 },
-    },
-    {
-      id: 17,
-      name: "Quinn Fabray",
-      grade: "12",
-      academicYear: "2024-2025",
-      contact: "quinn@example.com",
-      address: "McKinley High, Springfield",
-      parent: "Judy Fabray",
-      marks: { Math: 87, Science: 85, History: 92, English: 94 },
-    },
-    {
-      id: 18,
-      name: "Rachel Green",
-      grade: "11",
-      academicYear: "2024-2025",
-      contact: "rachel@example.com",
-      address: "Central Perk, Springfield",
-      parent: "Dr. Leonard Green",
-      marks: { Math: 78, Science: 80, History: 85, English: 88 },
-    },
-    {
-      id: 19,
-      name: "Sheldon Cooper",
-      grade: "10",
-      academicYear: "2024-2025",
-      contact: "sheldon@example.com",
-      address: "Caltech, Springfield",
-      parent: "Mary Cooper",
-      marks: { Math: 100, Science: 100, History: 95, English: 98 },
-    },
-    {
-      id: 20,
-      name: "Tony Stark",
-      grade: "12",
-      academicYear: "2024-2025",
-      contact: "tony@example.com",
-      address: "Stark Tower, Springfield",
-      parent: "Howard Stark",
-      marks: { Math: 98, Science: 99, History: 92, English: 95 },
-    },
-    {
-      id: 21,
-      name: "Uhura Nyota",
-      grade: "11",
-      academicYear: "2024-2025",
-      contact: "uhura@example.com",
-      address: "USS Enterprise, Springfield",
-      parent: "Mr. Uhura",
-      marks: { Math: 90, Science: 92, History: 88, English: 94 },
-    },
-    {
-      id: 22,
-      name: "Vito Corleone",
-      grade: "10",
-      academicYear: "2024-2025",
-      contact: "vito@example.com",
-      address: "Corleone Compound, Springfield",
-      parent: "Antonio Andolini",
-      marks: { Math: 85, Science: 82, History: 90, English: 86 },
-    },
-    {
-      id: 23,
-      name: "Walter White",
-      grade: "9",
-      academicYear: "2024-2025",
-      contact: "walter@example.com",
-      address: "308 Negra Arroyo Lane, Springfield",
-      parent: "Mr. White",
-      marks: { Math: 99, Science: 100, History: 85, English: 90 },
-    },
-    {
-      id: 24,
-      name: "Xena Warrior",
-      grade: "12",
-      academicYear: "2024-2025",
-      contact: "xena@example.com",
-      address: "Amphipolis, Springfield",
-      parent: "Cyrene",
-      marks: { Math: 88, Science: 85, History: 95, English: 89 },
-    },
-    {
-      id: 25,
-      name: "Yoda Master",
-      grade: "11",
-      academicYear: "2024-2025",
-      contact: "yoda@example.com",
-      address: "Dagobah, Springfield",
-      parent: "The Force",
-      marks: { Math: 95, Science: 95, History: 95, English: 95 },
-    },
-    {
-      id: 26,
-      name: "Zelda Princess",
-      grade: "10",
-      academicYear: "2024-2025",
-      contact: "zelda@example.com",
-      address: "Hyrule Castle, Springfield",
-      parent: "King Rhoam",
-      marks: { Math: 92, Science: 90, History: 94, English: 93 },
-    },
-    {
-      id: 27,
-      name: "Arthur Dent",
-      grade: "9",
-      academicYear: "2024-2025",
-      contact: "arthur@example.com",
-      address: "Earth, Mostly Harmless",
-      parent: "Mr. Dent",
-      marks: { Math: 75, Science: 72, History: 78, English: 80 },
-    },
-    {
-      id: 28,
-      name: "Buffy Summers",
-      grade: "12",
-      academicYear: "2024-2025",
-      contact: "buffy@example.com",
-      address: "Sunnydale High, Springfield",
-      parent: "Joyce Summers",
-      marks: { Math: 89, Science: 87, History: 91, English: 92 },
-    },
-    {
-      id: 29,
-      name: "Clark Kent",
-      grade: "11",
-      academicYear: "2024-2025",
-      contact: "clark@example.com",
-      address: "Smallville, Springfield",
-      parent: "Jonathan Kent",
-      marks: { Math: 94, Science: 93, History: 92, English: 95 },
-    },
-    {
-      id: 30,
-      name: "Dana Scully",
-      grade: "10",
-      academicYear: "2024-2025",
-      contact: "dana@example.com",
-      address: "FBI Headquarters, Springfield",
-      parent: "William Scully",
-      marks: { Math: 96, Science: 98, History: 93, English: 97 },
-    },
-  ];
+  // --- INITIALIZATION ---
+  // For a public-only view, we directly set up public navigation and show the default section.
+  function initializePublicViewOnly() {
+    setupPublicNavigation(); // Set up navigation listeners for public view
+    // Show the initial section based on hash or default to #home
+    showPublicSection(window.location.hash);
+  }
+  // --- PUBLIC NAVIGATION SETUP ---
+  function setupPublicNavigation() {
+    // target header for click events
+    const publicHeader = document.querySelector(
+      "#public-page-container header"
+    );
+    const aboutUsPublicMenu = document.getElementById("about-us-public-menu");
 
-  let teachers = [
-    {
-      id: 1,
-      name: "David Williams",
-      subject: "Math",
-      contact: "david.w@example.com",
-    },
-    {
-      id: 2,
-      name: "Emily Davis",
-      subject: "Science",
-      contact: "emily.d@example.com",
-    },
-    {
-      id: 3,
-      name: "Frank Miller",
-      subject: "History",
-      contact: "frank.m@example.com",
-    },
-  ];
+    if (publicHeader) {
+      publicHeader.addEventListener("click", function (e) {
+        const link = e.target.closest(".public-nav-link");
+        if (link) {
+          e.preventDefault(); // prevent browser's default link
+          window.location.hash = link.getAttribute("href"); // update the url
+        }
+        const toggle = e.target.closest("#about-us-public-toggle");
+        if (toggle) {
+          document
+            .getElementById("about-us-public-dropdown")
+            .classList.toggle("hidden"); // toggle dropdown visibility
+        }
+      });
+      // close the "About Us" dropdown if a click occures outside of it.
+      window.addEventListener("click", function (e) {
+        if (aboutUsPublicMenu && !aboutUsPublicMenu.contains(e.target)) {
+          this.document
+            .getElementById("about-us-public-dropdown")
+            .classList.add("hidden");
+        }
+      });
+    }
+    // Listen for hash changes to show/hide public section.
+    window.addEventListener("hashchange", () => {
+      showPublicSection(window.location.hash);
+    });
+  }
+  // Manage the display of sections on the public page.
+  function showPublicSection(hash) {
+    const sections = document.querySelectorAll(".public-section");
+    const defaultHash = "#home";
+    const normalizedHash = hash || defaultHash;
+    console.log(normalizedHash);
+
+    // Hide all public sections first
+    sections.forEach((section) => section.classList.add("hidden"));
+
+    // valid public view hashes
+    const activeSectionId = `${normalizedHash.substring(1)} - public`;
+    console.log(activeSectionId);
+    let activeSection = document.getElementById(activeSectionId);
+    let validHashes = ["#home", "#news", "#intro", "#faculty"];
+
+    if (activeSection && validHashes.includes(normalizedHash)) {
+      // show the target public section .
+      activeSection.classList.remove("hidden");
+      // Render contenct based on the active public section.
+      switch (normalizedHash) {
+        case "#home":
+          renderHome(document.getElementById("home-public"));
+          break;
+        case "#news":
+          renderNews(document.getElementById("#news"));
+          break;
+        case "#intro":
+          renderIntro(document.getElementById("intro-public"));
+          break;
+        case "#faculty":
+          renderFaculty(document.getElementById("faculty-public"));
+          break;
+      }
+    } else {
+      // if unknow or invalid hash, default to home page
+      window.location.hash = "#home";
+      const homeSection = document.getElementById("home-public");
+      homeSection.classList.remove("hidden");
+      renderHome(homeSection);
+    }
+  }
+
+  // Render function for dynamic content
+  function renderHome(container) {
+    container.innerHTML = `
+
+                <div id="home-public" class="public-section">
+                <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Welcome to Hamro School (Public View)</h2>
+                    <p class="text-gray-600 text-xl">Excellence in Education, Foundation for the Future.</p>
+                    <p class="text-gray-500 mt-4">This is the public home page. Please log in to access more features.
+                    </p>
+                </div>
+                <hr class="my-8 border-gray-300">
+            </div>
+    
+    `;
+  }
+  // initial app load
+  initializePublicViewOnly();
 });
-// --- UTILITY FUNCTIONS ---
