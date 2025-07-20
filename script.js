@@ -510,9 +510,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function setupPublicNavigation() {
-    const publicNav = document.querySelector("#login-page header nav");
-    if (publicNav) {
-      publicNav.addEventListener("click", function (e) {
+    const publicHeader = document.querySelector("#login-page header"); // Updated to target the header
+    const aboutUsPublicMenu = document.getElementById("about-us-public-menu");
+    if (publicHeader) {
+      // Updated condition
+      publicHeader.addEventListener("click", function (e) {
+        // Event listener on the header
         const link = e.target.closest(".public-nav-link");
         if (link) {
           e.preventDefault();
@@ -524,6 +527,15 @@ document.addEventListener("DOMContentLoaded", function () {
           document
             .getElementById("about-us-public-dropdown")
             .classList.toggle("hidden");
+        }
+      });
+
+      // Close dropdown if clicked outside
+      window.addEventListener("click", function (e) {
+        if (!aboutUsPublicMenu.contains(e.target)) {
+          document
+            .getElementById("about-us-public-dropdown")
+            .classList.add("hidden");
         }
       });
     }
